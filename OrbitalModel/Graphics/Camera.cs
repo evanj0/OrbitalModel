@@ -1,10 +1,12 @@
 ﻿using OpenTK.Mathematics;
+using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace OrbitalModel.Graphics;
 
 public class Camera
 {
-    public Vector3 Position { get; set; } = (0, 0, 1);
+    public Vector3 Position { get; set; } = (1, 1, 1);
     public Vector4 Position4
     {
         get => (Position.X, Position.Y, Position.Z, 0);
@@ -15,7 +17,7 @@ public class Camera
         get => Target - Position;
         set => Target = Position + value;
     }
-    public Vector3 Up { get; set; } = (0, 1, 0);
+    public Vector3 Up { get; set; } = (0, 0, 1);
     public float FovRadians { get; set; } = MathHelper.DegreesToRadians(90.0f);
     public int ScreenWidth { get; set; } = 640;
     public int ScreenHeight { get; set; } = 480;
@@ -47,8 +49,65 @@ public class Camera
     public void RotateAboutZ(float x, float y, float angle)
     {
         Position -= (x, y, 0);
-        Quaternion rotation = Quaternion.FromAxisAngle((1, 0, 0), angle);
+        Quaternion rotation = Quaternion.FromAxisAngle(Vector3.UnitZ, angle);
         Position = (Position4 * Matrix4.CreateFromQuaternion(rotation)).Xyz;
         Position += (x, y, 0);
+    }
+
+    public void RotateAboutPointAndAxis(Vector3 point, Vector3 axis, float angle)
+    {
+        Position -= point;
+        Quaternion rotation = Quaternion.FromAxisAngle(axis, angle);
+        Position = (Position4 * Matrix4.CreateFromQuaternion(rotation)).Xyz;
+        Position += point;
+    }
+
+    public void Orbit(float azimuth, float inclination)
+    {
+        RotateAboutZ(Target.X, Target.Y, azimuth);
+        RotateAboutPointAndAxis(Target, Vector3.Cross(Position - Target, Up), inclination);
+    }
+}
+
+public static class GameWindow_Extensions
+{
+    public static void AddCameraZoom(this GameWindow window, Camera camera)
+    {
+        window.MouseWheel += args =>
+        {
+            camera.TranslateLocal(0, 0, -0.1f * args.Offset.Y * (camera.Position - camera.Target).LengthFast);
+            camera.Target = Vector3.Zero;
+        };
+    }
+
+    public static void AddSmoothCameraOrbit(this GameWindow window, Camera camera, float sensitivity, float maxSpeed, float minSpeed, float deceleration)
+    {
+        var velocity = Vector2.Zero;
+
+        window.MouseMove += args =>
+        {
+            if (window.IsMouseButtonDown(MouseButton.Left))
+            {
+                velocity.X += -1f * sensitivity * MathHelper.DegreesToRadians(args.DeltaX);
+                velocity.Y += 1f * sensitivity * MathHelper.DegreesToRadians(args.DeltaY);
+            }
+        };
+
+        window.UpdateFrame += args =>
+        {
+            camera.Orbit(velocity.X, velocity.Y);
+
+            if (velocity.LengthFast < minSpeed)
+            {
+                velocity = Vector2.Zero;
+            }
+            else if (velocity.LengthFast > maxSpeed)
+            {
+                velocity.NormalizeFast();
+                velocity *= maxSpeed;
+            }
+
+            velocity *= deceleration;
+        };
     }
 }

@@ -105,19 +105,8 @@ public class Program
             // Logic goes here
             // Console.WriteLine($"{Math.Round(1.0 / args.Time, 3)} FPS");
         };
-        window.MouseWheel += args =>
-        {
-            camera.TranslateLocal(0, 0, -0.1f * args.Offset.Y);
-            Console.WriteLine(camera.Position);
-        };
-        window.MouseMove += args =>
-        {
-            if (window.IsMouseButtonDown(MouseButton.Left))
-            {
-                //camera.TranslateLocal(-0.01f * args.DeltaX, 0, 0);
-                camera.RotateAboutZ(camera.Target.X, camera.Target.Y, MathHelper.DegreesToRadians(args.DeltaX));
-            }
-        };
+        window.AddSmoothCameraOrbit(camera, sensitivity: 0.1f, maxSpeed: 1f, minSpeed: 0.01f, deceleration: 0.75f);
+        window.AddCameraZoom(camera);
         window.Closing += args =>
         {
         };
