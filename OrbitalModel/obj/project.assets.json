@@ -795,21 +795,19 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\evan\\source\\repos\\OrbitalModel\\OrbitalModel\\OrbitalModel.csproj",
+      "projectUniqueName": "c:\\Users\\evan\\Documents\\GitHub\\OrbitalModel\\OrbitalModel\\OrbitalModel.csproj",
       "projectName": "OrbitalModel",
-      "projectPath": "C:\\Users\\evan\\source\\repos\\OrbitalModel\\OrbitalModel\\OrbitalModel.csproj",
+      "projectPath": "c:\\Users\\evan\\Documents\\GitHub\\OrbitalModel\\OrbitalModel\\OrbitalModel.csproj",
       "packagesPath": "C:\\Users\\evan\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\evan\\source\\repos\\OrbitalModel\\OrbitalModel\\obj\\",
+      "outputPath": "c:\\Users\\evan\\Documents\\GitHub\\OrbitalModel\\OrbitalModel\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\evan\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\evan\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -852,7 +850,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.200\\RuntimeIdentifierGraph.json"
       }
     }
   }
