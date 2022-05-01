@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "rXxHCJR8diAD+Ul7Xxa0n1FU1ZLbicjNylKsz3Q8FWmeyfsB2pcM7Om5gjr3axFZv5gYMO0zhjZ81WdyXtFiiA==",
+  "dgSpecHash": "YY2hg239bBMf21tB9QyRC8cNetWiy8dsYTwWQPl2JAo56UTzPirSDQVJvRBKVeKe5l9Mg+aEyCAU/B2XWbqT7A==",
   "success": true,
-  "projectFilePath": "c:\\Users\\evan\\Documents\\GitHub\\OrbitalModel\\OrbitalModel\\OrbitalModel.csproj",
+  "projectFilePath": "C:\\Users\\evan\\Documents\\GitHub\\OrbitalModel\\OrbitalModel\\OrbitalModel.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\evan\\.nuget\\packages\\csfml\\2.5.0\\csfml.2.5.0.nupkg.sha512",
     "C:\\Users\\evan\\.nuget\\packages\\opentk\\4.7.1\\opentk.4.7.1.nupkg.sha512",

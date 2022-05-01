@@ -5,6 +5,10 @@ namespace OrbitalModel.Graphics;
 public class Camera
 {
     public Vector3 Position { get; set; } = (0, 0, 1);
+    public Vector4 Position4
+    {
+        get => (Position.X, Position.Y, Position.Z, 0);
+    }
     public Vector3 Target { get; set; } = (0, 0, 0);
     public Vector3 Gaze
     {
@@ -18,10 +22,33 @@ public class Camera
     public float NearClip { get; set; } = 0.1f;
     public float FarClip { get; set; } = 100.0f;
 
+    public Matrix4 GetViewMatrix()
+    {
+        return Matrix4.LookAt(Position, Target, Up);
+    }
+
     public Matrix4 GetMatrix()
     {
-        var view = Matrix4.LookAt(Position, Target, Up);
+        var view = GetViewMatrix();
         var projection = Matrix4.CreatePerspectiveFieldOfView(FovRadians, (float)ScreenWidth / ScreenHeight, NearClip, FarClip);
-        return projection * view;
+        return view * projection;
+    }
+
+    public void TranslateLocal(float x, float y, float z)
+    {
+        var localToGlobal = GetViewMatrix().Inverted();
+
+        var localTranslation = new Vector4(x, y, z, 0);
+        var globalTranslation = (localTranslation * localToGlobal).Xyz;
+        Position += globalTranslation;
+        Target += globalTranslation;
+    }
+
+    public void RotateAboutZ(float x, float y, float angle)
+    {
+        Position -= (x, y, 0);
+        Quaternion rotation = Quaternion.FromAxisAngle((1, 0, 0), angle);
+        Position = (Position4 * Matrix4.CreateFromQuaternion(rotation)).Xyz;
+        Position += (x, y, 0);
     }
 }

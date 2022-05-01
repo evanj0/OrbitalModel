@@ -1,5 +1,6 @@
 ﻿using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.Common;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Graphics.OpenGL;
 
 using OrbitalModel.Graphics;
@@ -31,7 +32,7 @@ public class Program
 
         var camera = new Camera
         {
-            Position = (0, 0, 1),
+            Position = (0, -1, 1),
             Target = (0, 0, 0),
             ScreenWidth = width,
             ScreenHeight = height,
@@ -92,6 +93,7 @@ public class Program
             projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(90), (float)width / height, 0.01f, 100.0f);
             // matrices are transposed in OpenTK!
             var matrix = model * view * projection;
+            matrix = camera.GetMatrix() * model;
             var cameraUniform = GL.GetUniformLocation(program, "camera");
             GL.UniformMatrix4(cameraUniform, false, ref matrix);
 
@@ -105,7 +107,16 @@ public class Program
         };
         window.MouseWheel += args =>
         {
-
+            camera.TranslateLocal(0, 0, -0.1f * args.Offset.Y);
+            Console.WriteLine(camera.Position);
+        };
+        window.MouseMove += args =>
+        {
+            if (window.IsMouseButtonDown(MouseButton.Left))
+            {
+                //camera.TranslateLocal(-0.01f * args.DeltaX, 0, 0);
+                camera.RotateAboutZ(camera.Target.X, camera.Target.Y, MathHelper.DegreesToRadians(args.DeltaX));
+            }
         };
         window.Closing += args =>
         {
