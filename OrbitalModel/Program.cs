@@ -1,7 +1,8 @@
 ﻿using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.Common;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Graphics.OpenGL;
+
+using ImGuiNET;
 
 using OrbitalModel.Graphics;
 using OpenTK.Mathematics;
@@ -12,7 +13,7 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var width = 900;
+        var width = 1200;
         var height = 900;
 
         var gws = GameWindowSettings.Default;
@@ -30,9 +31,11 @@ public class Program
         
         var window = new GameWindow(gws, nws);
 
+        ImGuiController gui = null!;
+
         var camera = new Camera
         {
-            Position = (0, -1, 1),
+            Position = (1, 1, 1),
             Target = (0, 0, 0),
             ScreenWidth = width,
             ScreenHeight = height,
@@ -42,8 +45,18 @@ public class Program
 
         int program = 0;
 
+        Vao vao1 = null!;
+
+        var bodies = new List<Body>()
+        {
+            new Body(1, (0, 0, 0), (0, 0, 0)),
+            new Body(0.01, (0, 1, 0), (1, 0, 0)),
+        };
+
         window.Load += () =>
         {
+            gui = new ImGuiController(width, height);
+
             var vertices = new float[]
             {
                 -0.5f, -0.5f * (float)Math.Sqrt(3) / 3, 0.3f,       0.8f, 0.3f, 0.02f,
@@ -62,7 +75,7 @@ public class Program
                 5, 4, 1,
             };
 
-            var vao1 = new Vao();
+            vao1 = new Vao();
             vao1.Bind();
             var vbo1 = new Vbo(vertices);
             var ebo1 = new Ebo(indices);
@@ -81,32 +94,80 @@ public class Program
             GL.BindVertexArray(vao1.Id);
             // vao1.Bind();
         };
+
+        double lastFps = 0;
+        double lastFrameTime = 0;
+
         window.RenderFrame += args =>
         {
+            gui.Update(window, (float)args.Time);
+
             GL.ClearColor(0.07f, 0.13f, 0.17f, 1.0f);
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
             GL.UseProgram(program);
             var model = Matrix4.Identity;
-            var view = Matrix4.LookAt((0, -0.8f, 0.3f), (0, 0, 0), (0, 1, 0));
-            var projection = Matrix4.Identity;
-            projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(90), (float)width / height, 0.01f, 100.0f);
             // matrices are transposed in OpenTK!
-            var matrix = model * view * projection;
-            matrix = camera.GetMatrix() * model;
+            var matrix = camera.GetMatrix() * model;
             var cameraUniform = GL.GetUniformLocation(program, "camera");
             GL.UniformMatrix4(cameraUniform, false, ref matrix);
 
+            vao1.Bind();
             GL.DrawElements(PrimitiveType.Triangles, 9, DrawElementsType.UnsignedInt, 0);
+
+            // ImGui rendering
+
+            ImGui.SetNextWindowSize(new System.Numerics.Vector2(400, 600));
+            ImGui.SetNextWindowPos(new System.Numerics.Vector2(25, 25));
+            ImGui.SetWindowCollapsed(false);
+            if (ImGui.Begin("Options"))
+            {
+                ImGui.Text("Camera");
+                ImGui.Separator();
+                if (ImGui.Button("Reset Camera"))
+                {
+                    camera.Position = (1, 1, 1);
+                    camera.Target = (0, 0, 0);
+                }
+                ImGui.LabelText($"({Math.Round(camera.Position.X, 3)}, {Math.Round(camera.Position.Y, 3)}, {Math.Round(camera.Position.Z, 3)})", "Position");
+                ImGui.LabelText($"({Math.Round(camera.Target.X, 3)}, {Math.Round(camera.Target.Y, 3)}, {Math.Round(camera.Target.Z, 3)})", "Target");
+                ImGui.LabelText($"{Math.Round(camera.Gaze.LengthFast, 3)}", "Distance to Target");
+
+                ImGui.End();
+            }
+
+            ImGui.SetNextWindowSize(new System.Numerics.Vector2(400, 100));
+            ImGui.SetNextWindowPos(new System.Numerics.Vector2(400 + 25 + 25, 25));
+            ImGui.SetWindowCollapsed(false);
+            if (ImGui.Begin("Debug"))
+            {
+                ImGui.LabelText($"{lastFps}", "FPS");
+                ImGui.LabelText($"{lastFrameTime} ms", "Frame Time");
+
+                ImGui.End();
+            }
+
+            gui.Render();
+
+            // End rendering
+
             window.SwapBuffers();
         };
         window.UpdateFrame += args =>
         {
-            // Logic goes here
-            // Console.WriteLine($"{Math.Round(1.0 / args.Time, 3)} FPS");
+            lastFps = Math.Round(1.0 / args.Time, 3);
+            lastFrameTime = Math.Round(args.Time * 1000, 3);
+
+            Model.Step(1, 0.01, bodies);
         };
         window.AddSmoothCameraOrbit(camera, sensitivity: 0.1f, maxSpeed: 1f, minSpeed: 0.01f, deceleration: 0.75f);
-        window.AddCameraZoom(camera);
+        window.AddSmoothCameraZoom(camera, sensitivity: 0.1f, maxSpeed: 1f, minSpeed: 0.01f, deceleration: 0.75f);
+        window.Resize += args =>
+        {
+            GL.Viewport(0, 0, args.Width, args.Height);
+            gui.WindowResized(args.Width, args.Height);
+            camera.WindowResized(args.Width, args.Height);
+        };
         window.Closing += args =>
         {
         };

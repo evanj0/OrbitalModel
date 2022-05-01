@@ -36,14 +36,17 @@ public class Camera
         return view * projection;
     }
 
-    public void TranslateLocal(float x, float y, float z)
+    public void TranslateLocal(float x, float y, float z, bool translateTarget = false)
     {
         var localToGlobal = GetViewMatrix().Inverted();
 
         var localTranslation = new Vector4(x, y, z, 0);
         var globalTranslation = (localTranslation * localToGlobal).Xyz;
         Position += globalTranslation;
-        Target += globalTranslation;
+        if (translateTarget)
+        {
+            Target += globalTranslation;
+        }
     }
 
     public void RotateAboutZ(float x, float y, float angle)
@@ -67,16 +70,40 @@ public class Camera
         RotateAboutZ(Target.X, Target.Y, azimuth);
         RotateAboutPointAndAxis(Target, Vector3.Cross(Position - Target, Up), inclination);
     }
+
+    public void WindowResized(int width, int height)
+    {
+        ScreenWidth = width;
+        ScreenHeight = height;
+    }
 }
 
 public static class GameWindow_Extensions
 {
-    public static void AddCameraZoom(this GameWindow window, Camera camera)
+    public static void AddSmoothCameraZoom(this GameWindow window, Camera camera, float sensitivity, float maxSpeed, float minSpeed, float deceleration)
     {
+        var velocity = 0f;
+
         window.MouseWheel += args =>
         {
-            camera.TranslateLocal(0, 0, -0.1f * args.Offset.Y * (camera.Position - camera.Target).LengthFast);
-            camera.Target = Vector3.Zero;
+            velocity += -1f * sensitivity * args.OffsetY * (camera.Position - camera.Target).LengthFast;
+        };
+
+        window.UpdateFrame += args =>
+        {
+            camera.TranslateLocal(0, 0, velocity);
+
+            if (Math.Abs(velocity) < minSpeed)
+            {
+                velocity = 0f;
+            }
+            else if (Math.Abs(velocity) > maxSpeed)
+            {
+                velocity /= Math.Abs(velocity);
+                velocity *= maxSpeed;
+            }
+
+            velocity *= deceleration;
         };
     }
 
@@ -86,7 +113,7 @@ public static class GameWindow_Extensions
 
         window.MouseMove += args =>
         {
-            if (window.IsMouseButtonDown(MouseButton.Left))
+            if (window.IsMouseButtonDown(MouseButton.Left) && !ImGuiNET.ImGui.GetIO().WantCaptureMouse)
             {
                 velocity.X += -1f * sensitivity * MathHelper.DegreesToRadians(args.DeltaX);
                 velocity.Y += 1f * sensitivity * MathHelper.DegreesToRadians(args.DeltaY);
