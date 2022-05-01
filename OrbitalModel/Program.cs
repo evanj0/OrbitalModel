@@ -100,6 +100,7 @@ public class Program
 
         window.RenderFrame += args =>
         {
+            GL.Enable(EnableCap.DepthTest);
             gui.Update(window, (float)args.Time);
 
             GL.ClearColor(0.07f, 0.13f, 0.17f, 1.0f);
@@ -114,6 +115,11 @@ public class Program
 
             vao1.Bind();
             GL.DrawElements(PrimitiveType.Triangles, 9, DrawElementsType.UnsignedInt, 0);
+
+            foreach (var body in bodies)
+            {
+                body.Render(program, camera);
+            }
 
             // ImGui rendering
 
