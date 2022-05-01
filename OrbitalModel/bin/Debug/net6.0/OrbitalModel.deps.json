@@ -1,0 +1,640 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "OrbitalModel/1.0.0": {
+        "dependencies": {
+          "OpenTK": "4.7.1",
+          "SFML.Net": "2.5.0"
+        },
+        "runtime": {
+          "OrbitalModel.dll": {}
+        }
+      },
+      "CSFML/2.5.0": {
+        "runtimeTargets": {
+          "runtimes/alpine-x64/native/libcsfml-audio.so": {
+            "rid": "alpine-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/alpine-x64/native/libcsfml-graphics.so": {
+            "rid": "alpine-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/alpine-x64/native/libcsfml-system.so": {
+            "rid": "alpine-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/alpine-x64/native/libcsfml-window.so": {
+            "rid": "alpine-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/alpine-x64/native/libsfml-audio.so": {
+            "rid": "alpine-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/alpine-x64/native/libsfml-audio.so.2.5": {
+            "rid": "alpine-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/alpine-x64/native/libsfml-audio.so.2.5.1": {
+            "rid": "alpine-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/alpine-x64/native/libsfml-graphics.so": {
+            "rid": "alpine-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/alpine-x64/native/libsfml-graphics.so.2.5": {
+            "rid": "alpine-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/alpine-x64/native/libsfml-graphics.so.2.5.1": {
+            "rid": "alpine-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/alpine-x64/native/libsfml-system.so": {
+            "rid": "alpine-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/alpine-x64/native/libsfml-system.so.2.5": {
+            "rid": "alpine-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/alpine-x64/native/libsfml-system.so.2.5.1": {
+            "rid": "alpine-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/alpine-x64/native/libsfml-window.so": {
+            "rid": "alpine-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/alpine-x64/native/libsfml-window.so.2.5": {
+            "rid": "alpine-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/alpine-x64/native/libsfml-window.so.2.5.1": {
+            "rid": "alpine-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/debian-x64/native/libcsfml-audio.so": {
+            "rid": "debian-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/debian-x64/native/libcsfml-graphics.so": {
+            "rid": "debian-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/debian-x64/native/libcsfml-system.so": {
+            "rid": "debian-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/debian-x64/native/libcsfml-window.so": {
+            "rid": "debian-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/debian-x64/native/libsfml-audio.so": {
+            "rid": "debian-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/debian-x64/native/libsfml-audio.so.2.5": {
+            "rid": "debian-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/debian-x64/native/libsfml-audio.so.2.5.1": {
+            "rid": "debian-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/debian-x64/native/libsfml-graphics.so": {
+            "rid": "debian-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/debian-x64/native/libsfml-graphics.so.2.5": {
+            "rid": "debian-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/debian-x64/native/libsfml-graphics.so.2.5.1": {
+            "rid": "debian-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/debian-x64/native/libsfml-system.so": {
+            "rid": "debian-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/debian-x64/native/libsfml-system.so.2.5": {
+            "rid": "debian-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/debian-x64/native/libsfml-system.so.2.5.1": {
+            "rid": "debian-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/debian-x64/native/libsfml-window.so": {
+            "rid": "debian-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/debian-x64/native/libsfml-window.so.2.5": {
+            "rid": "debian-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/debian-x64/native/libsfml-window.so.2.5.1": {
+            "rid": "debian-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/fedora-x64/native/libcsfml-audio.so": {
+            "rid": "fedora-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/fedora-x64/native/libcsfml-graphics.so": {
+            "rid": "fedora-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/fedora-x64/native/libcsfml-system.so": {
+            "rid": "fedora-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/fedora-x64/native/libcsfml-window.so": {
+            "rid": "fedora-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/fedora-x64/native/libsfml-audio.so": {
+            "rid": "fedora-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/fedora-x64/native/libsfml-audio.so.2.5": {
+            "rid": "fedora-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/fedora-x64/native/libsfml-audio.so.2.5.1": {
+            "rid": "fedora-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/fedora-x64/native/libsfml-graphics.so": {
+            "rid": "fedora-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/fedora-x64/native/libsfml-graphics.so.2.5": {
+            "rid": "fedora-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/fedora-x64/native/libsfml-graphics.so.2.5.1": {
+            "rid": "fedora-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/fedora-x64/native/libsfml-system.so": {
+            "rid": "fedora-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/fedora-x64/native/libsfml-system.so.2.5": {
+            "rid": "fedora-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/fedora-x64/native/libsfml-system.so.2.5.1": {
+            "rid": "fedora-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/fedora-x64/native/libsfml-window.so": {
+            "rid": "fedora-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/fedora-x64/native/libsfml-window.so.2.5": {
+            "rid": "fedora-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/fedora-x64/native/libsfml-window.so.2.5.1": {
+            "rid": "fedora-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/csfml-Audio.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/csfml-Graphics.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/csfml-System.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/csfml-Window.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/openal32.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/csfml-Audio.dll": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/csfml-Graphics.dll": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/csfml-System.dll": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/csfml-Window.dll": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/openal32.dll": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "OpenTK/4.7.1": {
+        "dependencies": {
+          "OpenTK.Compute": "4.7.1",
+          "OpenTK.Core": "4.7.1",
+          "OpenTK.Graphics": "4.7.1",
+          "OpenTK.Input": "4.7.1",
+          "OpenTK.Mathematics": "4.7.1",
+          "OpenTK.OpenAL": "4.7.1",
+          "OpenTK.Windowing.Common": "4.7.1",
+          "OpenTK.Windowing.Desktop": "4.7.1",
+          "OpenTK.Windowing.GraphicsLibraryFramework": "4.7.1"
+        }
+      },
+      "OpenTK.Compute/4.7.1": {
+        "runtime": {
+          "lib/netcoreapp3.1/OpenTK.Compute.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "OpenTK.Core/4.7.1": {
+        "runtime": {
+          "lib/netstandard2.1/OpenTK.Core.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.0.0.0"
+          }
+        }
+      },
+      "OpenTK.Graphics/4.7.1": {
+        "dependencies": {
+          "OpenTK.Core": "4.7.1",
+          "OpenTK.Mathematics": "4.7.1"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/OpenTK.Graphics.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.0.0.0"
+          }
+        }
+      },
+      "OpenTK.Input/4.7.1": {
+        "runtime": {
+          "lib/netstandard2.0/OpenTK.Input.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.0.0.0"
+          }
+        }
+      },
+      "OpenTK.Mathematics/4.7.1": {
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "5.0.0"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/OpenTK.Mathematics.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.0.0.0"
+          }
+        }
+      },
+      "OpenTK.OpenAL/4.7.1": {
+        "dependencies": {
+          "OpenTK.Core": "4.7.1",
+          "OpenTK.Mathematics": "4.7.1"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/OpenTK.OpenAL.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.0.0.0"
+          }
+        }
+      },
+      "OpenTK.redist.glfw/3.3.0-pre20200830200122": {
+        "runtimeTargets": {
+          "runtimes/linux-x64/native/libglfw.so.3.3": {
+            "rid": "linux-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/osx-x64/native/libglfw.3.dylib": {
+            "rid": "osx-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/glfw3.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/glfw3.dll": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "OpenTK.Windowing.Common/4.7.1": {
+        "dependencies": {
+          "OpenTK.Core": "4.7.1",
+          "OpenTK.Mathematics": "4.7.1"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/OpenTK.Windowing.Common.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.0.0.0"
+          }
+        }
+      },
+      "OpenTK.Windowing.Desktop/4.7.1": {
+        "dependencies": {
+          "OpenTK.Core": "4.7.1",
+          "OpenTK.Mathematics": "4.7.1",
+          "OpenTK.Windowing.Common": "4.7.1",
+          "OpenTK.Windowing.GraphicsLibraryFramework": "4.7.1"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/OpenTK.Windowing.Desktop.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.0.0.0"
+          }
+        }
+      },
+      "OpenTK.Windowing.GraphicsLibraryFramework/4.7.1": {
+        "dependencies": {
+          "OpenTK.Core": "4.7.1",
+          "OpenTK.redist.glfw": "3.3.0-pre20200830200122"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/OpenTK.Windowing.GraphicsLibraryFramework.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.0.0.0"
+          }
+        }
+      },
+      "SFML.Audio/2.5.0": {
+        "dependencies": {
+          "CSFML": "2.5.0",
+          "SFML.Graphics": "2.5.0",
+          "SFML.System": "2.5.0",
+          "SFML.Window": "2.5.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/SFML.Audio.dll": {
+            "assemblyVersion": "2.5.0.0",
+            "fileVersion": "2.5.0.0"
+          }
+        }
+      },
+      "SFML.Graphics/2.5.0": {
+        "dependencies": {
+          "CSFML": "2.5.0",
+          "SFML.System": "2.5.0",
+          "SFML.Window": "2.5.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/SFML.Graphics.dll": {
+            "assemblyVersion": "2.5.0.0",
+            "fileVersion": "2.5.0.0"
+          }
+        }
+      },
+      "SFML.Net/2.5.0": {
+        "dependencies": {
+          "SFML.Audio": "2.5.0",
+          "SFML.Graphics": "2.5.0",
+          "SFML.System": "2.5.0",
+          "SFML.Window": "2.5.0"
+        }
+      },
+      "SFML.System/2.5.0": {
+        "dependencies": {
+          "CSFML": "2.5.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/SFML.System.dll": {
+            "assemblyVersion": "2.5.0.0",
+            "fileVersion": "2.5.0.0"
+          }
+        }
+      },
+      "SFML.Window/2.5.0": {
+        "dependencies": {
+          "CSFML": "2.5.0",
+          "SFML.System": "2.5.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/SFML.Window.dll": {
+            "assemblyVersion": "2.5.0.0",
+            "fileVersion": "2.5.0.0"
+          }
+        }
+      },
+      "System.Runtime.CompilerServices.Unsafe/5.0.0": {}
+    }
+  },
+  "libraries": {
+    "OrbitalModel/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CSFML/2.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-A3X+zyjAtvIQkpwCSS/F5fDOFRWeT+USIAK+DhGujNufF+qV1ty5cYGJihmmGeokX3yd89uZoNH8mcsmXCY/yw==",
+      "path": "csfml/2.5.0",
+      "hashPath": "csfml.2.5.0.nupkg.sha512"
+    },
+    "OpenTK/4.7.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-5cr8NBPvfLfvWGA7eCqWsRcZOG8664MN+tdL7qsvNKqY/MbOnCJHvzpceKtsV5XRSIcIrdKQX/DlAaTClQtKJw==",
+      "path": "opentk/4.7.1",
+      "hashPath": "opentk.4.7.1.nupkg.sha512"
+    },
+    "OpenTK.Compute/4.7.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-lZIIHEA9uLPQE70Jr/RQksxVtU0HUC/zGhYzv4sE+fVfJ63nOVr6nnSTcsMRbSuShe6dLtIqwZj7v84wlk0fqg==",
+      "path": "opentk.compute/4.7.1",
+      "hashPath": "opentk.compute.4.7.1.nupkg.sha512"
+    },
+    "OpenTK.Core/4.7.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-qvmTYM53EXYveUu10Iwv30Y7i5gVfzpOLggV3CY0/7BqsHN8o8u7UGKRClivLw1SKNV9HS3BlmhCYG45FYqxXg==",
+      "path": "opentk.core/4.7.1",
+      "hashPath": "opentk.core.4.7.1.nupkg.sha512"
+    },
+    "OpenTK.Graphics/4.7.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-dedYV6fM7LRg3BjoUCSXgC0WpjzIIJ8suJ1ERTVV1otLusGsMF3XS9Zgk2QW4lF7MdNYOshniesVIp3QLQMDmQ==",
+      "path": "opentk.graphics/4.7.1",
+      "hashPath": "opentk.graphics.4.7.1.nupkg.sha512"
+    },
+    "OpenTK.Input/4.7.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-L87kFaWK+6iiZiDyjE7D3hmx3cWSab1U2I9npAU6AZRyMxHBQQ+aay94lecN01Gd5xTQF+92fgqf15/bTZ3b4A==",
+      "path": "opentk.input/4.7.1",
+      "hashPath": "opentk.input.4.7.1.nupkg.sha512"
+    },
+    "OpenTK.Mathematics/4.7.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-DHuOxlTfo2bgNTNLFRlliB9Zh4rNOoIS4Y+fXgLB07ss4MLQld1KqCVn3GZ7tp8tZmgaLGNI01fYodNDBJYyGQ==",
+      "path": "opentk.mathematics/4.7.1",
+      "hashPath": "opentk.mathematics.4.7.1.nupkg.sha512"
+    },
+    "OpenTK.OpenAL/4.7.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-cIL6ZeDdZA8NDvvWQOWJXAdAqaGjzhI7P1/0uGJpWGP8tUiIe+etuTqzUjdnfbWOtfp1UlMasiw82XcIa1YmKA==",
+      "path": "opentk.openal/4.7.1",
+      "hashPath": "opentk.openal.4.7.1.nupkg.sha512"
+    },
+    "OpenTK.redist.glfw/3.3.0-pre20200830200122": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-EKE9pJCFHScbqOv/t0zG1h5Eh24nWr44SXYnpYtAWDhJhzAoUoI8TwDRXGvTGhDeCBp8ONEaVsq9xRC+OQIxQA==",
+      "path": "opentk.redist.glfw/3.3.0-pre20200830200122",
+      "hashPath": "opentk.redist.glfw.3.3.0-pre20200830200122.nupkg.sha512"
+    },
+    "OpenTK.Windowing.Common/4.7.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-zFXVqScVN4PclY9nxWW8aK+CRJU/SvMUqw/mqlLpKWbYGXsAKq8i9Wr9g5xkpUYfh60Hs/iWmTH8fhhX4UYmPQ==",
+      "path": "opentk.windowing.common/4.7.1",
+      "hashPath": "opentk.windowing.common.4.7.1.nupkg.sha512"
+    },
+    "OpenTK.Windowing.Desktop/4.7.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-dLsZlSJP58+OuCD2VsI9wMksEnp7zf2ETuMzXjlRx8RLpdfEc6accN0aNWGyxgi74xNzW5nmgfuKsRHTNiHptw==",
+      "path": "opentk.windowing.desktop/4.7.1",
+      "hashPath": "opentk.windowing.desktop.4.7.1.nupkg.sha512"
+    },
+    "OpenTK.Windowing.GraphicsLibraryFramework/4.7.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-VoZprEwUHbrKzO/ab9FQ+tXar48VUfQfG49HkqFvX9HMIQRKpLhqw6nAIBjyRP0pcmhIkGcbsQE4yZk0Lindfg==",
+      "path": "opentk.windowing.graphicslibraryframework/4.7.1",
+      "hashPath": "opentk.windowing.graphicslibraryframework.4.7.1.nupkg.sha512"
+    },
+    "SFML.Audio/2.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-M5EIksRefT3nsLT32oEpESStsnlixR+YjKS6fUMl+vDQ3gdMaV4jc84pg3kbfM9w4RYKAyH6OWV4bzDU5FNZyA==",
+      "path": "sfml.audio/2.5.0",
+      "hashPath": "sfml.audio.2.5.0.nupkg.sha512"
+    },
+    "SFML.Graphics/2.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-77Nuz0qmK2q2+901J0439LC6qFNw5VT0qjqqA7zSaM0WrV7K/UozBjfO/ROCY0iW+w7IEqPYiXBK4A7xO5nvsQ==",
+      "path": "sfml.graphics/2.5.0",
+      "hashPath": "sfml.graphics.2.5.0.nupkg.sha512"
+    },
+    "SFML.Net/2.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-XVxrtNX6FJOpI7OzsTlKUKI92C8CKVe1rYtNbyj9fdIdZgidwpK/kExhxH5XYxpJ5C1/EUsGdOrGx4BCfsQvbw==",
+      "path": "sfml.net/2.5.0",
+      "hashPath": "sfml.net.2.5.0.nupkg.sha512"
+    },
+    "SFML.System/2.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vdlmLjPRhOD25WX/L2wP3F9dg/3mTj6hhyHkqtleC0fA5WNr71F0ijLbvs32BBpow5OoyU7BryKMjy1WNmU0GQ==",
+      "path": "sfml.system/2.5.0",
+      "hashPath": "sfml.system.2.5.0.nupkg.sha512"
+    },
+    "SFML.Window/2.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-KuQvC0TrsxzhFJw9hDvMAzKD8/12jvXjP7sC3UO5MSM0sy5sfYNTqQktnQ3ELAV+rP1cqRKLsvosBfMfl1HkRw==",
+      "path": "sfml.window/2.5.0",
+      "hashPath": "sfml.window.2.5.0.nupkg.sha512"
+    },
+    "System.Runtime.CompilerServices.Unsafe/5.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ZD9TMpsmYJLrxbbmdvhwt9YEgG5WntEnZ/d1eH8JBX9LBp+Ju8BSBhUGbZMNVHHomWo2KVImJhTDl2hIgw/6MA==",
+      "path": "system.runtime.compilerservices.unsafe/5.0.0",
+      "hashPath": "system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512"
+    }
+  }
+}

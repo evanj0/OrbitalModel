@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "dgSpecHash": "K06257DR1liR0Gmc4oOt7OkzVaQxrWK7pi00V4DHSuwM34CTzf+9mUts/XkmMrytj+muOd+nYbQLzlPq9tW8gA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\evan\\source\\repos\\OrbitalModel\\OrbitalModel\\OrbitalModel.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\evan\\.nuget\\packages\\csfml\\2.5.0\\csfml.2.5.0.nupkg.sha512",
+    "C:\\Users\\evan\\.nuget\\packages\\opentk\\4.7.1\\opentk.4.7.1.nupkg.sha512",
+    "C:\\Users\\evan\\.nuget\\packages\\opentk.compute\\4.7.1\\opentk.compute.4.7.1.nupkg.sha512",
+    "C:\\Users\\evan\\.nuget\\packages\\opentk.core\\4.7.1\\opentk.core.4.7.1.nupkg.sha512",
+    "C:\\Users\\evan\\.nuget\\packages\\opentk.graphics\\4.7.1\\opentk.graphics.4.7.1.nupkg.sha512",
+    "C:\\Users\\evan\\.nuget\\packages\\opentk.input\\4.7.1\\opentk.input.4.7.1.nupkg.sha512",
+    "C:\\Users\\evan\\.nuget\\packages\\opentk.mathematics\\4.7.1\\opentk.mathematics.4.7.1.nupkg.sha512",
+    "C:\\Users\\evan\\.nuget\\packages\\opentk.openal\\4.7.1\\opentk.openal.4.7.1.nupkg.sha512",
+    "C:\\Users\\evan\\.nuget\\packages\\opentk.redist.glfw\\3.3.0-pre20200830200122\\opentk.redist.glfw.3.3.0-pre20200830200122.nupkg.sha512",
+    "C:\\Users\\evan\\.nuget\\packages\\opentk.windowing.common\\4.7.1\\opentk.windowing.common.4.7.1.nupkg.sha512",
+    "C:\\Users\\evan\\.nuget\\packages\\opentk.windowing.desktop\\4.7.1\\opentk.windowing.desktop.4.7.1.nupkg.sha512",
+    "C:\\Users\\evan\\.nuget\\packages\\opentk.windowing.graphicslibraryframework\\4.7.1\\opentk.windowing.graphicslibraryframework.4.7.1.nupkg.sha512",
+    "C:\\Users\\evan\\.nuget\\packages\\sfml.audio\\2.5.0\\sfml.audio.2.5.0.nupkg.sha512",
+    "C:\\Users\\evan\\.nuget\\packages\\sfml.graphics\\2.5.0\\sfml.graphics.2.5.0.nupkg.sha512",
+    "C:\\Users\\evan\\.nuget\\packages\\sfml.net\\2.5.0\\sfml.net.2.5.0.nupkg.sha512",
+    "C:\\Users\\evan\\.nuget\\packages\\sfml.system\\2.5.0\\sfml.system.2.5.0.nupkg.sha512",
+    "C:\\Users\\evan\\.nuget\\packages\\sfml.window\\2.5.0\\sfml.window.2.5.0.nupkg.sha512",
+    "C:\\Users\\evan\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\5.0.0\\system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

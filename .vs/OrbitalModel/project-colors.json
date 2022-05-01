@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "5e52e65a-32ac-45e4-af71-25851db670a5": {
+      "ProjectGuid": "5e52e65a-32ac-45e4-af71-25851db670a5",
+      "DisplayName": "OrbitalModel",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}
