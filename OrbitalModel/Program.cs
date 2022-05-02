@@ -37,7 +37,7 @@ public class Program
 
         var camera = new Camera
         {
-            Position = (1, 1, 1),
+            Position = (1.5f, 1.5f, 1),
             Target = (0, 0, 0),
             ScreenWidth = width,
             ScreenHeight = height,
@@ -50,34 +50,14 @@ public class Program
         Shader colorShader = null!;
         Shader textureShader = null!;
 
-        Vao vao1 = null!;
 
-        var bodies = new List<Body>()
-        {
-            new Body(1, (0, 0, 0), (0, 0, 0)),
-            new Body(0.0001, (0, 1, 0), (1, 0, 0)),
-            new Body(0.0005, (0, -1, 0), (0.5, 0, 0)),
-            new Body(0.0005, (0, -0.8, 0), (-0.5, 0, 0)),
-            new Body(0.0005, (0, -0.8, 0.5), (-0.5, 0.5, 0)),
-        };
+        List<Body> bodies = null!;
         var g = 1.0;
         var dt = 1.0f;
         var dtMultiplier = 0.0001f;
         var simsPerFrame = 1;
 
-        var originXY = new Mesh(
-            new float[] 
-            {
-                0, 0, 0,    0, 0, 0,
-                0, -1, 0,   0, 0, 0,
-                1, 0, 0,    0, 0, 0,
-            },
-            new int[]
-            {
-                0, 1, 2,
-            },
-            colorShader
-            );
+        Mesh origin = null!;
 
         var originScale = Matrix4.CreateScale(0.25f);
 
@@ -86,31 +66,49 @@ public class Program
             gui = new ImGuiController(width, height);
 
             GL.Enable(EnableCap.DepthTest);
-
-            program = CreateShader();
-            // GL.UseProgram(program);
+            GL.Enable(EnableCap.Blend);
+            GL.Disable(EnableCap.CullFace);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
             colorShader = new ShaderBuilder()
-                .AddVertexFromFile("../../../assets/vertex_shader.glsl")
-                .AddFragmentFromFile("../../../assets/fragment_shader.glsl")
+                .AddVertexFromFile("../../../assets/vertex.glsl")
+                .AddFragmentFromFile("../../../assets/fragment_color.glsl")
                 .Compile();
 
-            GL.BindVertexArray(vao1.Id);
-            // vao1.Bind();
+            origin = Meshes.CreateOrigin()
+                .Scale(0.75f)
+                .CreateMesh(colorShader);
+
+            bodies = new List<Body>()
+            {
+                new Body(1, (0, 0, 0.25f), (0, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
+                new Body(0.0001, (0, 1, 0), (1, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
+                new Body(0.0005, (0, -1, 0), (0.5, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
+                new Body(0.0005, (0, -0.8, 0), (-0.5, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
+                new Body(0.0005, (0, -0.8, 0.5), (-0.5, 0.5, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
+            };
         };
 
         double lastFps = 0;
         double lastFrameTime = 0;
+        int trackedBody = 0;
+        bool tracking = false;
 
         window.RenderFrame += args =>
-        {
+        {            
             GL.Enable(EnableCap.DepthTest);
             gui.Update(window, (float)args.Time);
 
             GL.ClearColor(0.07f, 0.13f, 0.17f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
-            originXY.Render(camera, originScale);
+            if (tracking)
+            {
+                var pos = bodies[trackedBody].Position;
+                camera.Target = ((float)pos.X, (float)pos.Y, (float)pos.Z);
+            }
+
+            origin.Render(camera, originScale);
 
             foreach (var body in bodies)
             {
@@ -131,10 +129,12 @@ public class Program
                 {
                     camera.Position = (1, 1, 1);
                     camera.Target = (0, 0, 0);
+                    tracking = false;
                 }
                 if (ImGui.Button("Look At Origin"))
                 {
                     camera.Target = (0, 0, 0);
+                    tracking = false;
                 }
                 ImGui.SliderFloat("Field of View (degrees)", ref fov, 10.0f, 179.0f);
                 camera.FovDegrees = fov;
@@ -148,10 +148,24 @@ public class Program
                 ImGui.Separator();
                 ImGui.SliderFloat("Time Step (dt)", ref dt, 1f, 10f);
                 ImGui.SliderFloat("Time Step Multiplier", ref dtMultiplier, 0.0001f, 1.0f);
-                ImGui.SliderInt("Steps Per Frame", ref simsPerFrame, 1, 1000);
+                ImGui.SliderInt("Steps Per Frame", ref simsPerFrame, 1, 10000);
                 ImGui.LabelText("Time Step (dt)", $"{dt * dtMultiplier} s");
                 ImGui.LabelText("Simulation Frequency (frames/s)", $"{simulationFrequency}");
                 ImGui.LabelText("Time Scale", $"{Math.Round(dt * simulationFrequency * simsPerFrame, 3)} s = 1 s");
+
+                // Objects
+                ImGui.Text("Objects");
+                ImGui.Separator();
+                for (var i = 0; i < bodies.Count; i++)
+                {
+                    ImGui.Text($"{bodies[i].Mass}[{i}]:");
+                    if (ImGui.Button("Look At"))
+                    {
+                        Console.WriteLine(i);
+                        trackedBody = i;
+                        tracking = true;
+                    }
+                }
 
                 ImGui.End();
             }
@@ -195,67 +209,5 @@ public class Program
         {
         };
         window.Run();
-    }
-
-    public static int CreateShader()
-    {
-        var vertexShader = GL.CreateShader(ShaderType.VertexShader);
-        var fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
-
-        GL.ShaderSource(vertexShader, File.ReadAllText("../../../assets/vertex_shader.glsl"));
-        GL.ShaderSource(fragmentShader, File.ReadAllText("../../../assets/fragment_shader.glsl"));
-
-        GL.CompileShader(vertexShader);
-        GL.CompileShader(fragmentShader); 
-
-        Console.WriteLine(GL.GetShaderInfoLog(vertexShader));
-        Console.WriteLine(GL.GetShaderInfoLog(fragmentShader));
-
-        var shaderProgram = GL.CreateProgram();
-
-        GL.AttachShader(shaderProgram, vertexShader);
-        GL.AttachShader(shaderProgram, fragmentShader);
-
-        GL.LinkProgram(shaderProgram);
-
-        GL.DetachShader(shaderProgram, vertexShader);
-        GL.DetachShader(shaderProgram, fragmentShader);
-
-        GL.DeleteShader(fragmentShader);
-        GL.DeleteShader(vertexShader);
-
-        Console.WriteLine(GL.GetProgramInfoLog(shaderProgram));
-
-        return shaderProgram;
-    }
-
-    public static int CreateVao(out int indexBuffer)
-    {
-        var vertexBuffer = GL.GenBuffer();
-        var colorBuffer = GL.GenBuffer();
-        indexBuffer = GL.GenBuffer();
-        var vao = GL.GenVertexArray();
-
-        GL.BindVertexArray(vao);
-        GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer);
-        GL.BufferData(BufferTarget.ArrayBuffer, 9 * sizeof(float), new float[] { -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f }, BufferUsageHint.StaticCopy);
-        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0);
-        GL.EnableVertexAttribArray(0);
-
-        GL.BindBuffer(BufferTarget.ArrayBuffer, colorBuffer);
-        GL.BufferData(BufferTarget.ArrayBuffer, 9 * sizeof(float), new float[] { 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f }, BufferUsageHint.StaticCopy);
-        GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 0, 0);
-        GL.EnableVertexAttribArray(1);
-
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
-        GL.BufferData(BufferTarget.ElementArrayBuffer, 3 * sizeof(uint), new uint[] { 0, 1, 2 }, BufferUsageHint.StaticCopy);
-
-        GL.BindVertexArray(0);
-        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-
-        GL.DeleteBuffer(vertexBuffer);
-        GL.DeleteBuffer(colorBuffer);
-
-        return vao;
     }
 }
