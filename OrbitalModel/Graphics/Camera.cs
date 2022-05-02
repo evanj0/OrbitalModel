@@ -137,4 +137,15 @@ public static class GameWindow_Extensions
             velocity *= deceleration;
         };
     }
+
+    public static void AddCameraPan(this GameWindow window, Camera camera, float sensitivity)
+    {
+        window.MouseMove += args =>
+        {
+            if (window.IsMouseButtonDown(MouseButton.Right) && !ImGuiNET.ImGui.GetIO().WantCaptureMouse)
+            {
+                camera.TranslateLocal(-1f * args.DeltaX * sensitivity, args.DeltaY * sensitivity, 0, true);
+            }
+        };
+    }
 }

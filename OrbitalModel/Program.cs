@@ -15,11 +15,12 @@ public class Program
     {
         var width = 1200;
         var height = 900;
+        var simulationFrequency = 60.0;
 
         var gws = GameWindowSettings.Default;
         var nws = NativeWindowSettings.Default;
         gws.RenderFrequency = 60.0;
-        gws.UpdateFrequency = 60.0;
+        gws.UpdateFrequency = simulationFrequency;
 
         nws.IsEventDriven = false;
         nws.API = ContextAPI.OpenGL;
@@ -50,8 +51,30 @@ public class Program
         var bodies = new List<Body>()
         {
             new Body(1, (0, 0, 0), (0, 0, 0)),
-            new Body(0.01, (0, 1, 0), (1, 0, 0)),
+            new Body(0.0001, (0, 1, 0), (1, 0, 0)),
+            new Body(0.0005, (0, -1, 0), (0.5, 0, 0)),
+            new Body(0.0005, (0, -0.8, 0), (-0.5, 0, 0)),
+            new Body(0.0005, (0, -0.8, 0.5), (-0.5, 0.5, 0)),
         };
+        var g = 1.0;
+        var dt = 1.0f;
+        var dtMultiplier = 0.0001f;
+        var simsPerFrame = 1;
+
+        var originXY = new Renderer(
+            new float[] 
+            {
+                0, 0, 0,    0, 0, 0,
+                0, -1, 0,   0, 0, 0,
+                1, 0, 0,    0, 0, 0,
+            },
+            new int[]
+            {
+                0, 1, 2,
+            }
+            );
+
+        var originScale = Matrix4.CreateScale(0.25f);
 
         window.Load += () =>
         {
@@ -113,8 +136,10 @@ public class Program
             var cameraUniform = GL.GetUniformLocation(program, "camera");
             GL.UniformMatrix4(cameraUniform, false, ref matrix);
 
-            vao1.Bind();
-            GL.DrawElements(PrimitiveType.Triangles, 9, DrawElementsType.UnsignedInt, 0);
+            // vao1.Bind();
+            // GL.DrawElements(PrimitiveType.Triangles, 9, DrawElementsType.UnsignedInt, 0);
+
+            originXY.Render(program, camera, originScale);
 
             foreach (var body in bodies)
             {
@@ -123,11 +148,12 @@ public class Program
 
             // ImGui rendering
 
-            ImGui.SetNextWindowSize(new System.Numerics.Vector2(400, 600));
-            ImGui.SetNextWindowPos(new System.Numerics.Vector2(25, 25));
+            ImGui.SetNextWindowSize(new System.Numerics.Vector2(500, 600));
+            ImGui.SetNextWindowPos(new System.Numerics.Vector2(0, 0));
             ImGui.SetWindowCollapsed(false);
             if (ImGui.Begin("Options"))
             {
+                // Camera
                 ImGui.Text("Camera");
                 ImGui.Separator();
                 if (ImGui.Button("Reset Camera"))
@@ -135,20 +161,34 @@ public class Program
                     camera.Position = (1, 1, 1);
                     camera.Target = (0, 0, 0);
                 }
-                ImGui.LabelText($"({Math.Round(camera.Position.X, 3)}, {Math.Round(camera.Position.Y, 3)}, {Math.Round(camera.Position.Z, 3)})", "Position");
-                ImGui.LabelText($"({Math.Round(camera.Target.X, 3)}, {Math.Round(camera.Target.Y, 3)}, {Math.Round(camera.Target.Z, 3)})", "Target");
-                ImGui.LabelText($"{Math.Round(camera.Gaze.LengthFast, 3)}", "Distance to Target");
+                if (ImGui.Button("Look At Origin"))
+                {
+                    camera.Target = (0, 0, 0);
+                }
+                ImGui.LabelText("Position", $"({Math.Round(camera.Position.X, 3)}, {Math.Round(camera.Position.Y, 3)}, {Math.Round(camera.Position.Z, 3)})");
+                ImGui.LabelText("Target", $"({Math.Round(camera.Target.X, 3)}, {Math.Round(camera.Target.Y, 3)}, {Math.Round(camera.Target.Z, 3)})");
+                ImGui.LabelText("Distance to Target", $"{Math.Round(camera.Gaze.LengthFast, 3)}");
+
+                // Simulation
+                ImGui.Text("Simulation");
+                ImGui.Separator();
+                ImGui.SliderFloat("Time Step (dt)", ref dt, 1f, 10f);
+                ImGui.SliderFloat("Time Step Multiplier", ref dtMultiplier, 0.0001f, 1.0f);
+                ImGui.SliderInt("Steps Per Frame", ref simsPerFrame, 1, 1000);
+                ImGui.LabelText("Time Step (dt)", $"{dt * dtMultiplier} s");
+                ImGui.LabelText("Simulation Frequency (frames/s)", $"{simulationFrequency}");
+                ImGui.LabelText("Time Scale", $"{Math.Round(dt * simulationFrequency * simsPerFrame, 3)} s = 1 s");
 
                 ImGui.End();
             }
 
             ImGui.SetNextWindowSize(new System.Numerics.Vector2(400, 100));
-            ImGui.SetNextWindowPos(new System.Numerics.Vector2(400 + 25 + 25, 25));
+            ImGui.SetNextWindowPos(new System.Numerics.Vector2(500, 0));
             ImGui.SetWindowCollapsed(false);
             if (ImGui.Begin("Debug"))
             {
-                ImGui.LabelText($"{lastFps}", "FPS");
-                ImGui.LabelText($"{lastFrameTime} ms", "Frame Time");
+                ImGui.LabelText("frames/s", $"{lastFps}");
+                ImGui.LabelText("Frame Time", $"{lastFrameTime} ms");
 
                 ImGui.End();
             }
@@ -163,11 +203,14 @@ public class Program
         {
             lastFps = Math.Round(1.0 / args.Time, 3);
             lastFrameTime = Math.Round(args.Time * 1000, 3);
-
-            Model.Step(1, 0.01, bodies);
+            for (int i = 0; i < simsPerFrame; i++)
+            {
+                Model.Step(g, dt * dtMultiplier, bodies);
+            }
         };
         window.AddSmoothCameraOrbit(camera, sensitivity: 0.1f, maxSpeed: 1f, minSpeed: 0.01f, deceleration: 0.75f);
         window.AddSmoothCameraZoom(camera, sensitivity: 0.1f, maxSpeed: 1f, minSpeed: 0.01f, deceleration: 0.75f);
+        window.AddCameraPan(camera, sensitivity: 0.001f);
         window.Resize += args =>
         {
             GL.Viewport(0, 0, args.Width, args.Height);
