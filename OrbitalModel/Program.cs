@@ -16,6 +16,7 @@ public class Program
         var width = 1200;
         var height = 900;
         var simulationFrequency = 60.0;
+        float fov = 90;
 
         var gws = GameWindowSettings.Default;
         var nws = NativeWindowSettings.Default;
@@ -46,6 +47,9 @@ public class Program
 
         int program = 0;
 
+        Shader colorShader = null!;
+        Shader textureShader = null!;
+
         Vao vao1 = null!;
 
         var bodies = new List<Body>()
@@ -61,7 +65,7 @@ public class Program
         var dtMultiplier = 0.0001f;
         var simsPerFrame = 1;
 
-        var originXY = new Renderer(
+        var originXY = new Mesh(
             new float[] 
             {
                 0, 0, 0,    0, 0, 0,
@@ -71,7 +75,8 @@ public class Program
             new int[]
             {
                 0, 1, 2,
-            }
+            },
+            colorShader
             );
 
         var originScale = Matrix4.CreateScale(0.25f);
@@ -80,39 +85,15 @@ public class Program
         {
             gui = new ImGuiController(width, height);
 
-            var vertices = new float[]
-            {
-                -0.5f, -0.5f * (float)Math.Sqrt(3) / 3, 0.3f,       0.8f, 0.3f, 0.02f,
-                0.5f, -0.5f * (float)Math.Sqrt(3) / 3, 0.0f,        0.8f, 0.3f, 0.02f,
-                0.0f, 0.5f * (float)Math.Sqrt(3) * 2 / 3, 0.0f,     1.0f, 0.6f, 0.32f,
-
-                -0.5f / 2, 0.5f * (float)Math.Sqrt(3) / 6, 0.0f,    0.9f, 0.45f, 0.17f,
-                0.5f / 2, 0.5f * (float)Math.Sqrt(3) / 6, 0.0f,     0.9f, 0.45f, 0.17f,
-                0.0f, -0.5f * (float)Math.Sqrt(3) / 3, 0.0f,        0.8f, 0.3f, 0.02f,
-            };
-
-            var indices = new int[]
-            {
-                0, 3, 5,
-                3, 2, 4,
-                5, 4, 1,
-            };
-
-            vao1 = new Vao();
-            vao1.Bind();
-            var vbo1 = new Vbo(vertices);
-            var ebo1 = new Ebo(indices);
-
-            vao1.LinkAttrib(vbo1, 0, 3, VertexAttribPointerType.Float, 6 * sizeof(float), 0);
-            vao1.LinkAttrib(vbo1, 1, 3, VertexAttribPointerType.Float, 6 * sizeof(float), 3 * sizeof(float));
-            vao1.Unbind();
-            vbo1.Unbind();
-            ebo1.Unbind();
-
             GL.Enable(EnableCap.DepthTest);
 
             program = CreateShader();
             // GL.UseProgram(program);
+
+            colorShader = new ShaderBuilder()
+                .AddVertexFromFile("../../../assets/vertex_shader.glsl")
+                .AddFragmentFromFile("../../../assets/fragment_shader.glsl")
+                .Compile();
 
             GL.BindVertexArray(vao1.Id);
             // vao1.Bind();
@@ -129,17 +110,7 @@ public class Program
             GL.ClearColor(0.07f, 0.13f, 0.17f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
-            GL.UseProgram(program);
-            var model = Matrix4.Identity;
-            // matrices are transposed in OpenTK!
-            var matrix = camera.GetMatrix() * model;
-            var cameraUniform = GL.GetUniformLocation(program, "camera");
-            GL.UniformMatrix4(cameraUniform, false, ref matrix);
-
-            // vao1.Bind();
-            // GL.DrawElements(PrimitiveType.Triangles, 9, DrawElementsType.UnsignedInt, 0);
-
-            originXY.Render(program, camera, originScale);
+            originXY.Render(camera, originScale);
 
             foreach (var body in bodies)
             {
@@ -165,6 +136,9 @@ public class Program
                 {
                     camera.Target = (0, 0, 0);
                 }
+                ImGui.SliderFloat("Field of View (degrees)", ref fov, 10.0f, 179.0f);
+                camera.FovDegrees = fov;
+                
                 ImGui.LabelText("Position", $"({Math.Round(camera.Position.X, 3)}, {Math.Round(camera.Position.Y, 3)}, {Math.Round(camera.Position.Z, 3)})");
                 ImGui.LabelText("Target", $"({Math.Round(camera.Target.X, 3)}, {Math.Round(camera.Target.Y, 3)}, {Math.Round(camera.Target.Z, 3)})");
                 ImGui.LabelText("Distance to Target", $"{Math.Round(camera.Gaze.LengthFast, 3)}");

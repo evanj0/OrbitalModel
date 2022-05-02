@@ -8,17 +8,19 @@ using System.Threading.Tasks;
 
 namespace OrbitalModel.Graphics;
 
-public class Renderer
+public class Mesh
 {
-    public float[] Vertices;
-    public int[] Indices;
+    public float[] Vertices { get; set; }
+    public int[] Indices { get; set; }
+    public Shader Shader { get; set; }
 
     private Vao _vao;
 
-    public Renderer(float[] vertices, int[] indices)
+    public Mesh(float[] vertices, int[] indices, Shader shader)
     {
         Vertices = vertices;
         Indices = indices;
+        Shader = shader;
 
         _vao = new Vao();
         _vao.Bind();
@@ -34,9 +36,9 @@ public class Renderer
         _vao.Unbind();
     }
 
-    public void Render(int shader, Camera camera, Matrix4 transform)
+    public void Render(Camera camera, Matrix4 transform)
     {
-        GL.UseProgram(shader);
+        Shader.Activate();
         var matrix = transform * camera.GetMatrix();
         var cameraUniform = GL.GetUniformLocation(shader, "camera");
         GL.UniformMatrix4(cameraUniform, false, ref matrix);

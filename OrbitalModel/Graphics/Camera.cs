@@ -19,6 +19,11 @@ public class Camera
     }
     public Vector3 Up { get; set; } = (0, 0, 1);
     public float FovRadians { get; set; } = MathHelper.DegreesToRadians(90.0f);
+    public float FovDegrees
+    {
+        get => MathHelper.RadiansToDegrees(FovRadians);
+        set => FovRadians = MathHelper.DegreesToRadians(value);
+    }
     public int ScreenWidth { get; set; } = 640;
     public int ScreenHeight { get; set; } = 480;
     public float NearClip { get; set; } = 0.1f;

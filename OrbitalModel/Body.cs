@@ -8,13 +8,14 @@ public class Body
     public double Mass { get; set; }
     public Vector Velocity { get; set; }
     public Vector Position { get; set; }
-    private Renderer _renderer;
+    private Mesh _mesh;
 
-    public Body(double mass, Vector position, Vector velocity)
+    public Body(double mass, Vector position, Vector velocity, Mesh mesh)
     {
         Mass = mass;
         Velocity = velocity;
         Position = position;
+        _mesh = mesh;
         var bytes = new byte[] { 0, 0, 0, };
         new Random().NextBytes(bytes);
         var r = bytes[0] / 255.0f;
@@ -39,13 +40,11 @@ public class Body
             0, 2, 4,
             0, 2, 3,
         };
-
-        _renderer = new Renderer(vertices, indices);
     }
 
     public void Render(int shader, Camera camera)
     {
         var matrix = Matrix4.CreateScale(0.1f * (float)Mass + 0.1f) * Matrix4.CreateTranslation((float)Position.X, (float)Position.Y, (float)Position.Z);
-        _renderer.Render(shader, camera, matrix);
+        _mesh.Render(camera, matrix);
     }
 }
