@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenTK.Mathematics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
@@ -9,21 +10,26 @@ namespace OrbitalModel;
 
 public static class Model
 {
-    public static Vector Acceleration(double g, Vector p, IEnumerable<Body> bodies)
+    public static Vector3 Acceleration(float g, Vector3 p, IEnumerable<Body> bodies)
     {
-        var sum = Vector.Zero;
+        var sum = Vector3.Zero;
         foreach (var body in bodies)
         {
             var x = body.Position - p;
-            var r = x.Mag;
+            var r = x.Length;
             if (r == 0) continue;
-            var a = x.Norm * ((g * body.Mass) / (r * r));
+            var a = x.Normalized() * ((g * body.Mass) / (r * r));
             sum += a;
         }
         return sum;
     }
 
-    public static void Step(double g, double dt, IEnumerable<Body> bodies)
+    public static Vector3 Acceleration(this IEnumerable<Body> bodies, float g, Vector3 p)
+    {
+        return Acceleration(g, p, bodies);
+    }
+
+    public static void Step(float g, float dt, IEnumerable<Body> bodies)
     {
         foreach (var body in bodies)
         {
@@ -34,6 +40,11 @@ public static class Model
         {
             body.Position += body.Velocity * dt;
         }
+    }
+
+    public static void UpdateForceVectorField(IEnumerable<Body> bodies, VectorField vectorField, float g)
+    {
+        vectorField.UpdateVectors((pos, vec) => bodies.Acceleration(g, pos));
     }
 }
 

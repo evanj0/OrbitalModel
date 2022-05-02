@@ -93,13 +93,13 @@ public class Face
 
 public class MeshBuilder
 {
-    private List<Face> _faces;
-    private List<Vertex> _vertices;
+    private Dictionary<object, Vertex> _vertices;
+    private List<object> _keys;
     private Color4 _color;
 
     public MeshBuilder()
     {
-        _faces = new();
+        _keys = new();
         _vertices = new();
     }
 
@@ -109,53 +109,56 @@ public class MeshBuilder
         return this;
     }
 
-    public MeshBuilder AddVertex(Vector3 position, Vector2 textureCoordinates)
+    public MeshBuilder AddVertex(Vector3 position, Vector2 textureCoordinates, object key)
     {
-        _vertices.Add(new Vertex(position, _color, textureCoordinates));
-        if (_vertices.Count >= 3)
-        {
-            _faces.Add(new Face(_vertices[0], _vertices[1], _vertices[2]));
-            _vertices.Clear();
-        }
+        _vertices.Add(key, new Vertex(position, _color, textureCoordinates));
         return this;
     }
 
-    public MeshBuilder AddFace(Vector3 pos1, Vector3 pos2, Vector3 pos3, Vector2 tex1, Vector2 tex2, Vector2 tex3)
+    public MeshBuilder AddFace(object key1, object key2, object key3)
     {
-        _faces.Add(new Face(new Vertex(pos1, _color, tex1), new Vertex(pos2, _color, tex2), new Vertex(pos3, _color, tex3)));
+        if (!_vertices.ContainsKey(key1)) throw new ArgumentException($"Vertex {key1} not found.");
+        if (!_vertices.ContainsKey(key2)) throw new ArgumentException($"Vertex {key2} not found.");
+        if (!_vertices.ContainsKey(key3)) throw new ArgumentException($"Vertex {key3} not found.");
+        _keys.Add(key1);
+        _keys.Add(key2);
+        _keys.Add(key3);
         return this;
-    }
-
-    public MeshBuilder AddFace(Vector3 pos1, Vector3 pos2, Vector3 pos3)
-    {
-        var uv = new Vector2(0, 0);
-        return AddFace(pos1, pos2, pos3, uv, uv, uv);
     }
 
     public MeshBuilder Scale(float scale)
     {
-        foreach (var face in _faces)
+        foreach (var vertex in _vertices.Values)
         {
-            face.Vertex0.Position *= scale;
-            face.Vertex1.Position *= scale;
-            face.Vertex2.Position *= scale;
+            vertex.Position *= scale;
+        }
+        return this;
+    }
+
+    public MeshBuilder ScaleXY(float scale)
+    {
+        foreach (var vertex in _vertices.Values)
+        {
+            vertex.Position = (vertex.Position.X * scale, vertex.Position.Y * scale, vertex.Position.Z);
         }
         return this;
     }
 
     public Mesh CreateMesh(Shader shader)
     {
-        var vertices = new float[_faces.Count * 3 * 9];
-        var indices = new int[_faces.Count * 3];
-        for (var i = 0; i < indices.Length; i++)
+        var vertices = new float[_vertices.Count * 3 * 9];
+        var indices = new int[_keys.Count];
+        var added = new Dictionary<object, (int Index, Vertex Vertex)>();
+        var index = 0;
+        for (var i = 0; i < _keys.Count; i++)
         {
-            indices[i] = i;
-        }
-        for (var i = 0; i < _faces.Count; i++)
-        {
-            _faces[i].Vertex0.WriteDataTo(vertices, i * 3 * 9);
-            _faces[i].Vertex1.WriteDataTo(vertices, i * 3 * 9 + 9);
-            _faces[i].Vertex2.WriteDataTo(vertices, i * 3 * 9 + 18);
+            var key = _keys[i];
+            if (!added.ContainsKey(key))
+            {
+                added.Add(key, (index, _vertices[key]));
+                index++;
+            }
+            indices[i] = added[key].Index;
         }
         return new Mesh(vertices, indices, shader);
     }

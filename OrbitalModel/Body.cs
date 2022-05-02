@@ -5,12 +5,12 @@ namespace OrbitalModel;
 
 public class Body
 {
-    public double Mass { get; set; }
-    public Vector Velocity { get; set; }
-    public Vector Position { get; set; }
+    public float Mass { get; set; }
+    public Vector3 Velocity { get; set; }
+    public Vector3 Position { get; set; }
     private Mesh _mesh;
 
-    public Body(double mass, Vector position, Vector velocity, Mesh mesh)
+    public Body(float mass, Vector3 position, Vector3 velocity, Mesh mesh)
     {
         Mass = mass;
         Velocity = velocity;
@@ -18,9 +18,9 @@ public class Body
         _mesh = mesh;
     }
 
-    public void Render(int shader, Camera camera)
+    public void Render(Camera camera)
     {
-        var matrix = Matrix4.CreateScale(0.1f * (float)Mass + 0.075f) * Matrix4.CreateTranslation((float)Position.X, (float)Position.Y, (float)Position.Z);
+        var matrix = Matrix4.CreateScale(0.1f * (float)Mass + 0.075f) * Matrix4.CreateTranslation(Position);
         _mesh.Render(camera, matrix);
     }
 }

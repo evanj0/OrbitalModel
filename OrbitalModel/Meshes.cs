@@ -16,7 +16,7 @@ public static class Meshes
         var green = Color4.GreenYellow;
         var blue = Color4.SkyBlue;
         var a = (0, 0, 0);
-        var b = (-1, 0, 0);
+        var b = (1, 0, 0);
         var c = (0, 1, 0);
         var d = (0, 0, 1);
         return new MeshBuilder()
@@ -56,6 +56,12 @@ public static class Meshes
             // top faces
             .AddFace(b, d, c)
             .AddFace(b, e, c);
+    }
+
+    public static MeshBuilder CreateArrow()
+    {
+        return CreateBodyMarker()
+            .Scale(-1f);
     }
 }
 

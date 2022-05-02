@@ -13,7 +13,7 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var width = 1200;
+        var width = 1400;
         var height = 900;
         var simulationFrequency = 60.0;
         float fov = 90;
@@ -45,17 +45,18 @@ public class Program
             FarClip = 100.0f,
         };
 
-        int program = 0;
-
         Shader colorShader = null!;
         Shader textureShader = null!;
 
 
         List<Body> bodies = null!;
-        var g = 1.0;
+        var g = 1.0f;
         var dt = 1.0f;
         var dtMultiplier = 0.0001f;
         var simsPerFrame = 1;
+
+        VectorField accelField = null!;
+        bool showAccelField = false;
 
         Mesh origin = null!;
 
@@ -82,11 +83,13 @@ public class Program
             bodies = new List<Body>()
             {
                 new Body(1, (0, 0, 0.25f), (0, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
-                new Body(0.0001, (0, 1, 0), (1, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
-                new Body(0.0005, (0, -1, 0), (0.5, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
-                new Body(0.0005, (0, -0.8, 0), (-0.5, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
-                new Body(0.0005, (0, -0.8, 0.5), (-0.5, 0.5, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
+                new Body(0.0001f, (0, 1, 0), (1, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
+                new Body(0.0005f, (0, -1, 0), (0.5f, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
+                new Body(0.0005f, (0, -0.8f, 0), (-0.5f, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
+                new Body(0.0005f, (0, -0.8f, 0.5f), (-0.5f, 0.5f, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
             };
+
+            accelField = new VectorField(-1, 1, -1, 1, -1, 1, 0.5f, colorShader);
         };
 
         double lastFps = 0;
@@ -112,7 +115,12 @@ public class Program
 
             foreach (var body in bodies)
             {
-                body.Render(program, camera);
+                body.Render(camera);
+            }
+
+            if (showAccelField)
+            {
+                accelField.Render(camera);
             }
 
             // ImGui rendering
@@ -152,6 +160,11 @@ public class Program
                 ImGui.LabelText("Time Step (dt)", $"{dt * dtMultiplier} s");
                 ImGui.LabelText("Simulation Frequency (frames/s)", $"{simulationFrequency}");
                 ImGui.LabelText("Time Scale", $"{Math.Round(dt * simulationFrequency * simsPerFrame, 3)} s = 1 s");
+
+                // Data
+                ImGui.Text("Data");
+                ImGui.Separator();
+                ImGui.Checkbox("Show acceleration vector field", ref showAccelField);
 
                 // Objects
                 ImGui.Text("Objects");
@@ -194,6 +207,10 @@ public class Program
             for (int i = 0; i < simsPerFrame; i++)
             {
                 Model.Step(g, dt * dtMultiplier, bodies);
+            }
+            if (showAccelField)
+            {
+                Model.UpdateForceVectorField(bodies, accelField, g);
             }
         };
         window.AddSmoothCameraOrbit(camera, sensitivity: 0.1f, maxSpeed: 1f, minSpeed: 0.01f, deceleration: 0.75f);
