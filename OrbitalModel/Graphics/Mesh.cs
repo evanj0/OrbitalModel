@@ -96,11 +96,13 @@ public class MeshBuilder
     private Dictionary<object, Vertex> _vertices;
     private List<object> _keys;
     private Color4 _color;
+    private Func<object, object> _keyTransformer;
 
     public MeshBuilder()
     {
         _keys = new();
         _vertices = new();
+        _keyTransformer = obj => obj;
     }
 
     public MeshBuilder SetVertexColor(Color4 color)
@@ -109,20 +111,66 @@ public class MeshBuilder
         return this;
     }
 
-    public MeshBuilder AddVertex(Vector3 position, Vector2 textureCoordinates, object key)
+    public MeshBuilder SetKeyTransformer(Func<object, object> f)
     {
-        _vertices.Add(key, new Vertex(position, _color, textureCoordinates));
+        _keyTransformer = f;
         return this;
     }
 
-    public MeshBuilder AddFace(object key1, object key2, object key3)
+    public MeshBuilder ResetKeyTransformer()
     {
-        if (!_vertices.ContainsKey(key1)) throw new ArgumentException($"Vertex {key1} not found.");
-        if (!_vertices.ContainsKey(key2)) throw new ArgumentException($"Vertex {key2} not found.");
-        if (!_vertices.ContainsKey(key3)) throw new ArgumentException($"Vertex {key3} not found.");
-        _keys.Add(key1);
-        _keys.Add(key2);
-        _keys.Add(key3);
+        _keyTransformer = obj => obj;
+        return this;
+    }
+
+    public MeshBuilder AddVertex(Vertex vertex, object key)
+    {
+        if (_vertices.ContainsKey(key)) throw new ArgumentException($"Vertex {key} already exists.");
+        _vertices.Add(_keyTransformer(key), vertex);
+        return this;
+    }
+
+    public MeshBuilder AddVertex(Vector3 position, Vector2 textureCoordinates, object key)
+    {
+        return AddVertex(new Vertex(position, _color, textureCoordinates), key);
+    }
+
+    public MeshBuilder AddVertex(Vector3 position, object key)
+    {
+        return AddVertex(position, (0, 0), key);
+    }
+
+    public MeshBuilder AddVertex(float x, float y, float z, object key)
+    {
+        return AddVertex((x, y, z), key);
+    }
+
+    public MeshBuilder AddTri(object key1, object key2, object key3)
+    {
+        if (!_vertices.ContainsKey(_keyTransformer(key1))) throw new ArgumentException($"Vertex {_keyTransformer(key1)} not found.");
+        if (!_vertices.ContainsKey(_keyTransformer(key2))) throw new ArgumentException($"Vertex {_keyTransformer(key2)} not found.");
+        if (!_vertices.ContainsKey(_keyTransformer(key3))) throw new ArgumentException($"Vertex {_keyTransformer(key3)} not found.");
+        _keys.Add(_keyTransformer(key1));
+        _keys.Add(_keyTransformer(key2));
+        _keys.Add(_keyTransformer(key3));
+        return this;
+    }
+
+    public MeshBuilder AddQuad(object key1, object key2, object key3, object key4)
+    {
+        return AddTri(key1, key2, key3).AddTri(key1, key3, key4);
+    }
+
+    public MeshBuilder JoinWith(MeshBuilder mesh)
+    {
+        foreach ((var key, var vertex) in mesh._vertices)
+        {
+            AddVertex(vertex, key);
+        }
+        foreach (var key in mesh._keys)
+        {
+            _keys.Add(key);
+        }
         return this;
     }
 
@@ -135,6 +183,20 @@ public class MeshBuilder
         return this;
     }
 
+    public MeshBuilder Scale(Vector3 scale)
+    {
+        foreach (var vertex in _vertices.Values)
+        {
+            vertex.Position *= scale;
+        }
+        return this;
+    }
+
+    public MeshBuilder Scale(float x, float y, float z)
+    {
+        return Scale((x, y, z));
+    }
+
     public MeshBuilder ScaleXY(float scale)
     {
         foreach (var vertex in _vertices.Values)
@@ -143,23 +205,41 @@ public class MeshBuilder
         }
         return this;
     }
+    
+    public MeshBuilder Translate(Vector3 translation)
+    {
+        foreach (var vertex in _vertices.Values)
+        {
+            vertex.Position += translation;
+        }
+        return this;
+    }
+
+    public MeshBuilder Translate(float x, float y, float z)
+    {
+        return Translate((x, y, z));
+    }
 
     public Mesh CreateMesh(Shader shader)
     {
-        var vertices = new float[_vertices.Count * 3 * 9];
-        var indices = new int[_keys.Count];
-        var added = new Dictionary<object, (int Index, Vertex Vertex)>();
+        var vertexBuffer = new float[_vertices.Count * 9];
+        var indexBuffer = new int[_keys.Count];
+        var addedVertices = new Dictionary<object, (int Index, Vertex Vertex)>();
         var index = 0;
         for (var i = 0; i < _keys.Count; i++)
         {
             var key = _keys[i];
-            if (!added.ContainsKey(key))
+            if (!addedVertices.ContainsKey(key))
             {
-                added.Add(key, (index, _vertices[key]));
+                addedVertices.Add(key, (index, _vertices[key]));
                 index++;
             }
-            indices[i] = added[key].Index;
+            indexBuffer[i] = addedVertices[key].Index;
         }
-        return new Mesh(vertices, indices, shader);
+        foreach ((var i, var vertex) in addedVertices.Values)
+        {
+            vertex.WriteDataTo(vertexBuffer, i * 9);
+        }
+        return new Mesh(vertexBuffer, indexBuffer, shader);
     }
 }

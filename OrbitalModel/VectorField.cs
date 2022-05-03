@@ -54,14 +54,14 @@ public class VectorField
             v.NormalizeFast();
             w.NormalizeFast();
             var translation = Matrix4.CreateTranslation(pos);
-            var scale = Matrix4.CreateScale((1, 1, direction.LengthFast * 0.25f + 0.25f));
+            var scale = Matrix4.CreateScale((1, 1, direction.LengthFast * 0.1f));
             var coordTransform = new Matrix4(
                 (u.X, v.X, w.X, 0),
                 (u.Y, v.Y, w.Y, 0),
                 (u.Z, v.Z, w.Z, 0),
                 (0,   0,   0,   1));
             coordTransform.Invert();
-            _arrow.Render(camera, coordTransform * (translation * scale));
+            _arrow.Render(camera, scale * coordTransform * translation);
         }
     }
 }

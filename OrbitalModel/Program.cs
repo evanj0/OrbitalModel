@@ -82,14 +82,15 @@ public class Program
 
             bodies = new List<Body>()
             {
-                new Body(1, (0, 0, 0.25f), (0, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
+                new Body(1, (0, 0, -0.5f), (-0.5f, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
+                new Body(1, (0, 0, 0.5f), (0.5f, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
                 new Body(0.0001f, (0, 1, 0), (1, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
                 new Body(0.0005f, (0, -1, 0), (0.5f, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
                 new Body(0.0005f, (0, -0.8f, 0), (-0.5f, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
                 new Body(0.0005f, (0, -0.8f, 0.5f), (-0.5f, 0.5f, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
             };
 
-            accelField = new VectorField(-1, 1, -1, 1, -1, 1, 0.5f, colorShader);
+            accelField = new VectorField(-1, 1, -1, 1, -1, 1, 0.25f, colorShader);
         };
 
         double lastFps = 0;
