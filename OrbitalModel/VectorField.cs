@@ -54,7 +54,8 @@ public class VectorField
             v.NormalizeFast();
             w.NormalizeFast();
             var translation = Matrix4.CreateTranslation(pos);
-            var scale = Matrix4.CreateScale((1, 1, direction.LengthFast * 0.1f));
+            var length = 1f - (1f / (0.1f * direction.LengthFast + 1));
+            var scale = Matrix4.CreateScale((1, 1, length * 0.5f));
             var coordTransform = new Matrix4(
                 (u.X, v.X, w.X, 0),
                 (u.Y, v.Y, w.Y, 0),

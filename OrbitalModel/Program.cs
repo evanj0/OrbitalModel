@@ -35,32 +35,10 @@ public class Program
 
         ImGuiController gui = null!;
 
-        var camera = new Camera
+        var vp = new SimulationViewport()
         {
-            Position = (1.5f, 1.5f, 1),
-            Target = (0, 0, 0),
-            ScreenWidth = width,
-            ScreenHeight = height,
-            NearClip = 0.1f,
-            FarClip = 100.0f,
+
         };
-
-        Shader colorShader = null!;
-        Shader textureShader = null!;
-
-
-        List<Body> bodies = null!;
-        var g = 1.0f;
-        var dt = 1.0f;
-        var dtMultiplier = 0.0001f;
-        var simsPerFrame = 1;
-
-        VectorField accelField = null!;
-        bool showAccelField = false;
-
-        Mesh origin = null!;
-
-        var originScale = Matrix4.CreateScale(0.25f);
 
         window.Load += () =>
         {
@@ -70,33 +48,15 @@ public class Program
             GL.Enable(EnableCap.Blend);
             GL.Disable(EnableCap.CullFace);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-
-            colorShader = new ShaderBuilder()
-                .AddVertexFromFile("../../../assets/vertex.glsl")
-                .AddFragmentFromFile("../../../assets/fragment_color.glsl")
-                .Compile();
-
-            origin = Meshes.CreateOrigin()
-                .Scale(0.75f)
-                .CreateMesh(colorShader);
-
-            bodies = new List<Body>()
-            {
-                new Body(1, (0, 0, -0.5f), (-0.5f, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
-                new Body(1, (0, 0, 0.5f), (0.5f, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
-                new Body(0.0001f, (0, 1, 0), (1, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
-                new Body(0.0005f, (0, -1, 0), (0.5f, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
-                new Body(0.0005f, (0, -0.8f, 0), (-0.5f, 0, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
-                new Body(0.0005f, (0, -0.8f, 0.5f), (-0.5f, 0.5f, 0), Meshes.CreateBodyMarker().CreateMesh(colorShader)),
-            };
-
-            accelField = new VectorField(-1, 1, -1, 1, -1, 1, 0.25f, colorShader);
+            vp.Init();
+            vp.AddBody(1, (0, 0, -0.5f), (-0.5f, 0, 0));
+            vp.AddBody(1, (0, 0, 0.5f), (0.5f, 0, 0));
+            vp.AddBody(0.0001f, (0, 1, 0), (1, 0, 0));
+            vp.AddBody(0.0005f, (0, -1, 0), (0.5f, 0, 0));
+            vp.AddBody(0.0005f, (0, -0.8f, 0), (-0.5f, 0, 0));
+            vp.AddBody(0.0005f, (0, -0.8f, 0.5f), (-0.5f, 0.5f, 0));
         };
-
-        double lastFps = 0;
-        double lastFrameTime = 0;
-        int trackedBody = 0;
-        bool tracking = false;
+        vp.AddToWindow(window);
 
         window.RenderFrame += args =>
         {            
@@ -106,23 +66,7 @@ public class Program
             GL.ClearColor(0.07f, 0.13f, 0.17f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
-            if (tracking)
-            {
-                var pos = bodies[trackedBody].Position;
-                camera.Target = ((float)pos.X, (float)pos.Y, (float)pos.Z);
-            }
-
-            origin.Render(camera, originScale);
-
-            foreach (var body in bodies)
-            {
-                body.Render(camera);
-            }
-
-            if (showAccelField)
-            {
-                accelField.Render(camera);
-            }
+            vp.Render();
 
             // ImGui rendering
 
@@ -136,31 +80,28 @@ public class Program
                 ImGui.Separator();
                 if (ImGui.Button("Reset Camera"))
                 {
-                    camera.Position = (1, 1, 1);
-                    camera.Target = (0, 0, 0);
-                    tracking = false;
+                    vp.ResetCamera();
                 }
                 if (ImGui.Button("Look At Origin"))
                 {
-                    camera.Target = (0, 0, 0);
-                    tracking = false;
+                    vp.LookAtOrigin();
                 }
-                ImGui.SliderFloat("Field of View (degrees)", ref fov, 10.0f, 179.0f);
-                camera.FovDegrees = fov;
+                ImGui.SliderFloat("Field of View (degrees)", ref vp.FovDegrees, 10.0f, 179.0f);
+                vp.ApplyFov();
                 
-                ImGui.LabelText("Position", $"({Math.Round(camera.Position.X, 3)}, {Math.Round(camera.Position.Y, 3)}, {Math.Round(camera.Position.Z, 3)})");
-                ImGui.LabelText("Target", $"({Math.Round(camera.Target.X, 3)}, {Math.Round(camera.Target.Y, 3)}, {Math.Round(camera.Target.Z, 3)})");
-                ImGui.LabelText("Distance to Target", $"{Math.Round(camera.Gaze.LengthFast, 3)}");
+                ImGui.LabelText("Position", vp.CameraPositionString);
+                ImGui.LabelText("Target", vp.CameraTargetString);
+                ImGui.LabelText("Distance to Target", $"{Math.Round(vp.DistanceToTargetDisplay, 3)}");
 
                 // Simulation
                 ImGui.Text("Simulation");
                 ImGui.Separator();
-                ImGui.SliderFloat("Time Step (dt)", ref dt, 1f, 10f);
-                ImGui.SliderFloat("Time Step Multiplier", ref dtMultiplier, 0.0001f, 1.0f);
-                ImGui.SliderInt("Steps Per Frame", ref simsPerFrame, 1, 10000);
-                ImGui.LabelText("Time Step (dt)", $"{dt * dtMultiplier} s");
+                ImGui.SliderFloat("Time Step Significand", ref vp.DtSignificand, 1f, 10f);
+                ImGui.SliderInt("Time Step Exponent", ref vp.DtExponent, -6, 6);
+                ImGui.SliderInt("Steps Per Frame", ref vp.StepsPerFrame, 1, 10000);
+                ImGui.LabelText("Time Step (dt)", $"{Math.Round(vp.RealDt, 4)} s");
                 ImGui.LabelText("Simulation Frequency (frames/s)", $"{simulationFrequency}");
-                ImGui.LabelText("Time Scale", $"{Math.Round(dt * simulationFrequency * simsPerFrame, 3)} s = 1 s");
+                ImGui.LabelText("Time Scale", $"{Math.Round(realDt * simulationFrequency * simsPerFrame, 3)} s = 1 s");
 
                 // Data
                 ImGui.Text("Data");
@@ -205,9 +146,26 @@ public class Program
         {
             lastFps = Math.Round(1.0 / args.Time, 3);
             lastFrameTime = Math.Round(args.Time * 1000, 3);
+            realDt = dtSignificand;
+            switch (dtExponent)
+            {
+                case -6: realDt *= 1e-6f; break;
+                case -5: realDt *= 1e-5f; break;
+                case -4: realDt *= 1e-4f; break;
+                case -3: realDt *= 1e-3f; break;
+                case -2: realDt *= 1e-2f; break;
+                case -1: realDt *= 1e-1f; break;
+                case  0: realDt *= 1e0f; break;
+                case  1: realDt *= 1e1f; break;
+                case  3: realDt *= 1e2f; break;
+                case  4: realDt *= 1e3f; break;
+                case  5: realDt *= 1e4f; break;
+                case  6: realDt *= 1e5f; break;
+                case  2: realDt *= 1e6f; break;
+            }
             for (int i = 0; i < simsPerFrame; i++)
             {
-                Model.Step(g, dt * dtMultiplier, bodies);
+                Model.Step(g, realDt, bodies);
             }
             if (showAccelField)
             {
