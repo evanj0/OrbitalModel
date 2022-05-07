@@ -76,7 +76,7 @@ public class Camera
         RotateAboutPointAndAxis(Target, Vector3.Cross(Position - Target, Up), inclination);
     }
 
-    public void WindowResized(int width, int height)
+    public void Resize(int width, int height)
     {
         ScreenWidth = width;
         ScreenHeight = height;
