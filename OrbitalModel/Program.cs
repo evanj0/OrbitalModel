@@ -2,6 +2,7 @@
 using OpenTK.Windowing.Common;
 using OpenTK.Graphics.OpenGL;
 using ImGuiNET;
+using System.Numerics;
 
 using OrbitalModel.Graphics;
 
@@ -37,6 +38,7 @@ public class Program
             Width = width,
             Height = height,
             SimulationFrequency = updateFrequency,
+            G = 1,
         };
 
         window.Load += () =>
@@ -56,7 +58,6 @@ public class Program
             vp.AddBody(0.0005f, (0, -0.8f, 0.5f), (-0.5f, 0.5f, 0));
         };
         vp.AddToWindow(window);
-
         window.RenderFrame += args =>
         {
             GL.Enable(EnableCap.DepthTest);
@@ -71,9 +72,12 @@ public class Program
             // Render gui
 
             gui.Update(window, (float)args.Time);
-            ImGui.SetNextWindowSize(new System.Numerics.Vector2(500, 600));
-            ImGui.SetNextWindowPos(new System.Numerics.Vector2(0, 0));
-            ImGui.SetWindowCollapsed(false);
+            // ImGui.DockSpaceOverViewport();
+            // if (ImGui.Begin("viewport"))
+            // {
+            // 
+            // }
+
             if (ImGui.Begin("options"))
             {
                 // Camera
@@ -97,6 +101,24 @@ public class Program
                 // Simulation
                 ImGui.Text("simulation");
                 ImGui.Separator();
+
+                if (vp.Paused)
+                {
+                    if (ImGui.Button("play"))
+                    {
+                        vp.Paused = false;
+                    }
+                }
+                else
+                {
+                    if (ImGui.Button("pause"))
+                    {
+                        vp.Paused = true;
+                    }
+                }
+                ImGui.SameLine();
+                ImGui.Text(vp.Paused ? "Paused" : "Running");
+
                 ImGui.SliderFloat("time step significand", ref vp.DtSignificand, 1f, 10f);
                 ImGui.SliderInt("time step exponent", ref vp.DtExponent, -6, 6);
                 ImGui.SliderInt("steps per frame", ref vp.StepsPerFrame, 1, 10000);
@@ -108,20 +130,37 @@ public class Program
                 ImGui.Text("data");
                 ImGui.Separator();
                 ImGui.Checkbox("show acceleration vector field", ref vp.ShowAccelerationField);
-                var input = "";
-                ImGui.InputText("min x", ref input, 10);
+                ImGui.SameLine();
+                var regenerate = ImGui.Button("regenerate");
 
+                ImGui.PushItemWidth(100f);
+                ImGui.DragFloat("x min", ref vp.VectorFieldXMin, v_speed: 0.5f);
+                ImGui.SameLine();
+                ImGui.SetNextItemWidth(100f);
+                ImGui.DragFloat("y min", ref vp.VectorFieldYMin, v_speed: 0.5f);
+                ImGui.SameLine();
+                ImGui.SetNextItemWidth(100f);
+                ImGui.DragFloat("z min", ref vp.VectorFieldZMin, v_speed: 0.5f);
+                ImGui.PopItemWidth();
 
-                // Objects
-                ImGui.Text("objects");
-                ImGui.Separator();
+                ImGui.PushItemWidth(100f);
+                ImGui.DragFloat("x max", ref vp.VectorFieldXMax, v_speed: 0.5f);
+                ImGui.SameLine();
+                ImGui.SetNextItemWidth(100f);
+                ImGui.DragFloat("y max", ref vp.VectorFieldYMax, v_speed: 0.5f);
+                ImGui.SameLine();
+                ImGui.SetNextItemWidth(100f);
+                ImGui.DragFloat("z max", ref vp.VectorFieldZMax, v_speed: 0.5f);
+                ImGui.PopItemWidth();
 
-                ImGui.End();
+                ImGui.DragFloat("spacing", ref vp.VectorFieldSpacing, 0.1f, 10f);
+
+                if (regenerate)
+                {
+                    vp.RegenerateAccelerationField();
+                }
             }
 
-            ImGui.SetNextWindowSize(new System.Numerics.Vector2(400, 100));
-            ImGui.SetNextWindowPos(new System.Numerics.Vector2(500, 0));
-            ImGui.SetWindowCollapsed(false);
             if (ImGui.Begin("debug"))
             {
                 ImGui.LabelText("render framerate", $"{vp.FramerateDisplay} fps");
@@ -142,6 +181,25 @@ public class Program
             gui.WindowResized(args.Width, args.Height);
             vp.Resize(args.Width, args.Height);
         };
+        window.TextInput += args =>
+        {
+            gui.PressChar((char)args.Unicode);
+        };
         window.Run();
     }
+}
+
+public class Vector3Field
+{
+    public Vector3Field(float x, float y, float z)
+    {
+        _value = new Vector3(x, y, z);
+    }
+
+    public ref Vector3 Ref => ref _value;
+    private Vector3 _value;
+
+    public void BindX(ref float x) => x = _value.X;
+    public void BindY(ref float y) => y = _value.Y;
+    public void BindZ(ref float z) => z = _value.Z;
 }

@@ -57,6 +57,7 @@ public class SimulationViewport
     private Mesh _origin;
     private double _lastFps = 0.0;
     private double _lastFrameTime = 0.0;
+    public bool Paused = false;
 
     /// <summary>
     /// Must be called before using.
@@ -71,7 +72,9 @@ public class SimulationViewport
             VectorFieldXMin, VectorFieldXMax, 
             VectorFieldYMin, VectorFieldYMax, 
             VectorFieldZMin, VectorFieldZMax, VectorFieldSpacing, _shader);
-        _origin = Meshes.CreateOrigin().Scale(0.5f).CreateMesh(_shader);
+        _origin = Meshes.CreateOrigin()
+            .Scale(0.25f)
+            .CreateMesh(_shader);
     }
 
     public void OnUpdate(FrameEventArgs args)
@@ -79,6 +82,10 @@ public class SimulationViewport
         _lastFps = Math.Round(1.0 / args.Time, 3);
         _lastFrameTime = Math.Round(args.Time * 1000, 3);
         _realDt = DtSignificand;
+        if (Paused)
+        {
+            _realDt = 0;
+        }
         switch (DtExponent)
         {
             case -6: _realDt *= 1e-6f; break;
@@ -152,8 +159,16 @@ public class SimulationViewport
         _camera.Resize(width, height);
     }
 
-    private static float Round(float value) => (float)Math.Round(value);
-    private static float Round(double value) => (float)Math.Round(value);
+    public void RegenerateAccelerationField()
+    {
+        _accelerationField = new VectorField(
+            VectorFieldXMin, VectorFieldXMax, 
+            VectorFieldYMin, VectorFieldYMax, 
+            VectorFieldZMin, VectorFieldZMax, VectorFieldSpacing, _shader);
+    }
+
+    private static float Round(float value) => (float)Math.Round(value, 3);
+    private static float Round(double value) => (float)Math.Round(value, 3);
 
     public string CameraPositionString => $"({Round(_camera.Position.X)}, {Round(_camera.Position.Y)}, {Round(_camera.Position.Z)})";
 

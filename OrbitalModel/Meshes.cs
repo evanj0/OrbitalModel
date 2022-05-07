@@ -62,11 +62,23 @@ public static class Meshes
             .AddQuad("x", "y", "-x", "-y");
     }
 
-    public static MeshBuilder CreateArrow()
+    public static MeshBuilder CreateArrow(this MeshBuilder meshBuilder)
     {
-        return CreateBodyMarker()
-            .Scale(-1f)
-            .Translate((0, 0, 1f));
+        var guid = Guid.NewGuid();
+        return meshBuilder
+            .SetKeyTransformer(id => $"{guid}-{id}")
+            .AddVertex(0, 0, 0, "o")
+            .AddVertex(1, 0, -1, "x")
+            .AddVertex(-1, 0, -1, "-x")
+            .AddVertex(0, 1, -1, "y")
+            .AddVertex(0, -1, -1, "-y")
+            .AddTri("o", "x", "y")
+            .AddTri("o", "x", "-y")
+            .AddTri("o", "-x", "y")
+            .AddTri("o", "-x", "-y")
+            .AddQuad("x", "y", "-x", "-y")
+            .Translate(0, 0, 1)
+            .ResetKeyTransformer();
     }
 
     public static MeshBuilder CreateCube(this MeshBuilder meshBuilder)

@@ -41,6 +41,8 @@ public class ImGuiController : IDisposable
 
         io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset;
 
+        io.ConfigFlags |= ImGuiConfigFlags.DockingEnable;
+
         CreateDeviceResources();
         SetKeyMappings();
 

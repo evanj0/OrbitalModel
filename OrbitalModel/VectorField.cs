@@ -20,20 +20,30 @@ public class VectorField
             {
                 for (var z = zMin; z <= zMax; z += spacing)
                 {
-                    Console.WriteLine($"{x},{y},{z}");
                     _vectors.Add(((x, y, z), (0, 0, 0)));
                 }
             }
         }
 
-        _arrow = Meshes.CreateArrow()
+        _arrow = new MeshBuilder()
+            .SetVertexColor(Color4.DarkOrange)
+            .CreateArrow()
             .ScaleXY(0.01f)
+            .CreateMesh(shader);
+
+        _cube = new MeshBuilder()
+            .SetVertexColor(Color4.Teal)
+            .CreateCube()
+            .Translate(-0.5f, -0.5f, -0.5f)
+            .Scale(0.015f)
             .CreateMesh(shader);
     }
 
     private List<(Vector3, Vector3)> _vectors;
 
     private Mesh _arrow;
+
+    private Mesh _cube;
 
     public void UpdateVectors(Func<Vector3, Vector3, Vector3> mapping)
     {
@@ -63,6 +73,7 @@ public class VectorField
                 (0,   0,   0,   1));
             coordTransform.Invert();
             _arrow.Render(camera, scale * coordTransform * translation);
+            _cube.Render(camera, translation);
         }
     }
 }
