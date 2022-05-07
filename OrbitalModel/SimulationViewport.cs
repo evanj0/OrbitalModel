@@ -55,8 +55,11 @@ public class SimulationViewport
     private VectorField _accelerationField;
     public bool ShowAccelerationField = false;
     private Mesh _origin;
-    private double _lastFps = 0.0;
-    private double _lastFrameTime = 0.0;
+    private double _lastUpdateFps = 0.0;
+    private double _lastUpdateTime = 0.0;
+    private double _lastRenderFps = 0.0;
+    private double _lastRenderTime = 0.0;
+
     public bool Paused = false;
 
     /// <summary>
@@ -79,8 +82,8 @@ public class SimulationViewport
 
     public void OnUpdate(FrameEventArgs args)
     {
-        _lastFps = Math.Round(1.0 / args.Time, 3);
-        _lastFrameTime = Math.Round(args.Time * 1000, 3);
+        _lastUpdateFps = 1.0 / args.Time;
+        _lastUpdateTime = args.Time * 1000;
         _realDt = DtSignificand;
         if (Paused)
         {
@@ -115,6 +118,11 @@ public class SimulationViewport
     public void AddToWindow(GameWindow window)
     {
         window.UpdateFrame += OnUpdate;
+        window.RenderFrame += args =>
+        {
+            _lastRenderFps = 1.0 / args.Time;
+            _lastRenderTime = args.Time * 1000;
+        };
         window.AddSmoothCameraOrbit(_camera, sensitivity: 0.1f, maxSpeed: 1f, minSpeed: 0.01f, deceleration: 0.75f);
         window.AddSmoothCameraZoom(_camera, sensitivity: 0.1f, maxSpeed: 1f, minSpeed: 0.01f, deceleration: 0.75f);
         window.AddCameraPan(_camera, sensitivity: 0.001f);
@@ -180,7 +188,22 @@ public class SimulationViewport
 
     public float TimeScaleDisplay => Round(_realDt * SimulationFrequency * StepsPerFrame);
 
-    public float FramerateDisplay => Round(_lastFps);
+    public float UpdateFramerateDisplay => Round(_lastUpdateFps);
 
-    public float FrameTimeDisplay => Round(_lastFrameTime);
+    public float UpdateFrameTimeDisplay => Round(_lastUpdateTime);
+
+    public float RenderFramerateDisplay => Round(_lastRenderFps);
+
+    public float RenderFrameTimeDisplay => Round(_lastRenderTime);
+
+    public int AccelerationFieldNumVectors
+    {
+        get
+        {
+            var x = (int)((float)(VectorFieldXMax - VectorFieldXMin) / VectorFieldSpacing);
+            var y = (int)((float)(VectorFieldYMax - VectorFieldYMin) / VectorFieldSpacing);
+            var z = (int)((float)(VectorFieldZMax - VectorFieldZMin) / VectorFieldSpacing);
+            return x * y * z;
+        }
+    }
 }

@@ -155,6 +155,8 @@ public class Program
 
                 ImGui.DragFloat("spacing", ref vp.VectorFieldSpacing, 0.1f, 10f);
 
+                ImGui.LabelText("number of vectors", $"{vp.AccelerationFieldNumVectors}");
+
                 if (regenerate)
                 {
                     vp.RegenerateAccelerationField();
@@ -163,8 +165,10 @@ public class Program
 
             if (ImGui.Begin("debug"))
             {
-                ImGui.LabelText("render framerate", $"{vp.FramerateDisplay} fps");
-                ImGui.LabelText("frame time", $"{vp.FrameTimeDisplay} ms");
+                ImGui.LabelText("render framerate", $"{vp.RenderFramerateDisplay} fps");
+                ImGui.LabelText("render frame time", $"{vp.RenderFrameTimeDisplay} ms");
+                ImGui.LabelText("update framerate", $"{vp.UpdateFramerateDisplay} fps");
+                ImGui.LabelText("update frame time", $"{vp.UpdateFrameTimeDisplay} ms");
 
                 ImGui.End();
             }
