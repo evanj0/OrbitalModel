@@ -131,7 +131,10 @@ public class Program
                 ImGui.Separator();
                 ImGui.Checkbox("show acceleration vector field", ref vp.ShowAccelerationField);
                 ImGui.SameLine();
-                var regenerate = ImGui.Button("regenerate");
+                if (ImGui.Button("regenerate"))
+                {
+                    vp.RegenerateAccelerationField();
+                }
 
                 ImGui.PushItemWidth(100f);
                 ImGui.DragFloat("x min", ref vp.VectorFieldXMin, v_speed: 0.5f);
@@ -156,11 +159,6 @@ public class Program
                 ImGui.DragFloat("spacing", ref vp.VectorFieldSpacing, 0.1f, 10f);
 
                 ImGui.LabelText("number of vectors", $"{vp.AccelerationFieldNumVectors}");
-
-                if (regenerate)
-                {
-                    vp.RegenerateAccelerationField();
-                }
             }
 
             if (ImGui.Begin("debug"))
