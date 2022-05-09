@@ -27,6 +27,7 @@ public class SimulationViewport
         _shader = null!;
         _accelerationField = null!;
         _origin = null!;
+        _centerOfMass = null!;
     }
 
     public int Width = 1400;
@@ -59,6 +60,10 @@ public class SimulationViewport
     private double _lastUpdateTime = 0.0;
     private double _lastRenderFps = 0.0;
     private double _lastRenderTime = 0.0;
+    public bool ShowCenterOfMass = false;
+    private Mesh _centerOfMass;
+    private Matrix4 _centerOfMassTransform = Matrix4.Identity;
+    public int PhysicalScaleOrder = 0;
 
     public bool Paused = false;
 
@@ -78,6 +83,7 @@ public class SimulationViewport
         _origin = Meshes.CreateOrigin()
             .Scale(0.25f)
             .CreateMesh(_shader);
+        _centerOfMass = new MeshBuilder().CreateCom().CreateMesh(_shader);
     }
 
     public void OnUpdate(FrameEventArgs args)
@@ -113,6 +119,10 @@ public class SimulationViewport
         {
             Model.UpdateForceVectorField(Bodies, _accelerationField, G);
         }
+        if (ShowCenterOfMass)
+        {
+            _centerOfMassTransform = Matrix4.CreateTranslation(Bodies.CenterOfMass());
+        }
     }
 
     public void AddToWindow(GameWindow window)
@@ -138,6 +148,10 @@ public class SimulationViewport
         if (ShowAccelerationField)
         {
             _accelerationField.Render(_camera);
+        }
+        if (ShowCenterOfMass)
+        {
+            _centerOfMass.Render(_camera, _centerOfMassTransform);
         }
     }
 

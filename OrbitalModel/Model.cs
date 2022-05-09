@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.InteropServices.ObjectiveC;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -45,6 +46,23 @@ public static class Model
     public static void UpdateForceVectorField(IEnumerable<Body> bodies, VectorField vectorField, float g)
     {
         vectorField.UpdateVectors((pos, vec) => bodies.Acceleration(g, pos));
+    }
+
+    public static Vector3 CenterOfMass(this IEnumerable<Body> bodies)
+    {
+        var mx = 0f;
+        var my = 0f;
+        var mz = 0f;
+        var mass = 0f;
+        foreach (var body in bodies)
+        {
+            mx += body.Mass * body.Position.X;
+            my += body.Mass * body.Position.Y;
+            mz += body.Mass * body.Position.Z;
+            mass += body.Mass;
+        }
+        var com = new Vector3(mx, my, mz) / mass;
+        return com;
     }
 }
 

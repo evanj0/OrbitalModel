@@ -2,6 +2,7 @@
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -97,6 +98,7 @@ public class MeshBuilder
     private List<object> _keys;
     private Color4 _color;
     private Func<object, object> _keyTransformer;
+    private string _guid;
 
     public MeshBuilder()
     {
@@ -114,6 +116,20 @@ public class MeshBuilder
     public MeshBuilder SetKeyTransformer(Func<object, object> f)
     {
         _keyTransformer = f;
+        return this;
+    }
+
+    public MeshBuilder SetRandomKeyTransformer()
+    {
+        _guid = Guid.NewGuid().ToString();
+        SetKeyTransformer(key => $"{_guid}::{key}");
+        return this;
+    }
+
+    public MeshBuilder SetRandomKeyTransformer(string ns)
+    {
+        _guid = Guid.NewGuid().ToString();
+        SetKeyTransformer(key => $"{ns}::{_guid}::{key}");
         return this;
     }
 
@@ -163,6 +179,10 @@ public class MeshBuilder
 
     public MeshBuilder JoinWith(MeshBuilder mesh)
     {
+        // Don't want keys to be changed when adding other mesh
+        var keyTransformer = _keyTransformer;
+        ResetKeyTransformer();
+
         foreach ((var key, var vertex) in mesh._vertices)
         {
             AddVertex(vertex, key);
@@ -170,7 +190,11 @@ public class MeshBuilder
         foreach (var key in mesh._keys)
         {
             _keys.Add(key);
+            Debug.Assert(mesh._vertices.ContainsKey(key));
         }
+
+        // Restore key transformer
+        SetKeyTransformer(keyTransformer);
         return this;
     }
 

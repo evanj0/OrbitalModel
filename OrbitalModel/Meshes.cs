@@ -81,11 +81,29 @@ public static class Meshes
             .ResetKeyTransformer();
     }
 
+    public static MeshBuilder CreateCom(this MeshBuilder meshBuilder)
+    {
+        var width = 0.02f;
+        return meshBuilder
+            .JoinWith(new MeshBuilder()
+                .SetVertexColor(Color4.White)
+                .CreateCenteredCube()
+                .Scale(width, width, 1.0f)) // z axis
+            .JoinWith(new MeshBuilder()
+                .SetVertexColor(Color4.White)
+                .CreateCenteredCube()
+                .Scale(width, 1.0f, width)) // y axis
+            .JoinWith(new MeshBuilder()
+                .SetVertexColor(Color4.White)
+                .CreateCenteredCube()
+                .Scale(1.0f, width, width));// x axis
+            
+    }
+
     public static MeshBuilder CreateCube(this MeshBuilder meshBuilder)
     {
-        var guid = Guid.NewGuid();
         return meshBuilder
-            .SetKeyTransformer(id => $"{guid}-{id}")
+            .SetRandomKeyTransformer("cube")
 
             .AddVertex(0, 0, 0, "o")
             .AddVertex(1, 0, 0, "x")
@@ -106,5 +124,8 @@ public static class Meshes
 
             .ResetKeyTransformer();
     }
+
+    public static MeshBuilder CreateCenteredCube(this MeshBuilder meshBuilder) =>
+        meshBuilder.CreateCube().Translate(-0.5f, -0.5f, -0.5f);
 }
 

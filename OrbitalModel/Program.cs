@@ -125,9 +125,10 @@ public class Program
                 ImGui.LabelText("time step", $"{vp.RealDtDisplay} s");
                 ImGui.LabelText("simulation framerate", $"{vp.SimulationFrequency} fps");
                 ImGui.LabelText("time scale", $"{vp.TimeScaleDisplay} s (sim) = 1 s (real)");
-
-                // Data
-                ImGui.Text("data");
+                // Implement this!
+                ImGui.SliderInt("physical scale order", ref vp.PhysicalScaleOrder, 0, 30);
+                // Vector field
+                ImGui.Text("vector field");
                 ImGui.Separator();
                 ImGui.Checkbox("show acceleration vector field", ref vp.ShowAccelerationField);
                 ImGui.SameLine();
@@ -159,6 +160,13 @@ public class Program
                 ImGui.DragFloat("spacing", ref vp.VectorFieldSpacing, 0.1f, 10f);
 
                 ImGui.LabelText("number of vectors", $"{vp.AccelerationFieldNumVectors}");
+
+                // Center of mass
+                ImGui.Text("center of mass");
+                ImGui.Separator();
+                ImGui.Checkbox("show center of mass", ref vp.ShowCenterOfMass);
+
+                ImGui.End();
             }
 
             if (ImGui.Begin("debug"))
@@ -189,19 +197,4 @@ public class Program
         };
         window.Run();
     }
-}
-
-public class Vector3Field
-{
-    public Vector3Field(float x, float y, float z)
-    {
-        _value = new Vector3(x, y, z);
-    }
-
-    public ref Vector3 Ref => ref _value;
-    private Vector3 _value;
-
-    public void BindX(ref float x) => x = _value.X;
-    public void BindY(ref float y) => y = _value.Y;
-    public void BindZ(ref float z) => z = _value.Z;
 }
