@@ -2,15 +2,43 @@
 using OpenTK.Windowing.Common;
 using OpenTK.Graphics.OpenGL;
 using ImGuiNET;
-using System.Numerics;
+using CommandLine;
+using System.Text.Json.Serialization;
 
 using OrbitalModel.Graphics;
+using System.Text.Json;
 
 namespace OrbitalModel;
+
+#nullable disable
+
+public class Options
+{
+    [Value(0, Required = true, HelpText = "File that describes the initial state of the simulation.")]
+    public string InputFilePath { get; set; }
+}
+
+#nullable enable
 
 public class Program
 {
     public static void Main(string[] args)
+    {
+        Parser.Default.ParseArguments<Options>(args)
+            .WithParsed(options =>
+            {
+                var inputFile = File.ReadAllText(options.InputFilePath);
+                var initialStateData = JsonSerializer.Deserialize<InitialStateData>(inputFile);
+                if (initialStateData is null) throw new Exception("Json object is null.");
+                Run(initialStateData);
+            })
+            .WithNotParsed(errors =>
+            {
+
+            });
+    }
+
+    public static void Run(InitialStateData initialStateData)
     {
         var width = 1200;
         var height = 800;
@@ -50,12 +78,16 @@ public class Program
             GL.Disable(EnableCap.CullFace);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             vp.Init();
-            vp.AddBody(1, (0, 0, -0.5f), (-0.5f, 0, 0));
-            vp.AddBody(1, (0, 0, 0.5f), (0.5f, 0, 0));
-            vp.AddBody(0.0001f, (0, 1, 0), (1, 0, 0));
-            vp.AddBody(0.0005f, (0, -1, 0), (0.5f, 0, 0));
-            vp.AddBody(0.0005f, (0, -0.8f, 0), (-0.5f, 0, 0));
-            vp.AddBody(0.0005f, (0, -0.8f, 0.5f), (-0.5f, 0.5f, 0));
+            foreach (var bodyData in initialStateData.Bodies)
+            {
+                vp.AddBody(bodyData.Mass, bodyData.Position.ToVector3(), bodyData.Velocity.ToVector3());
+            }
+            // vp.AddBody(1, (0, 0, -0.5f), (-0.5f, 0, 0));
+            // vp.AddBody(1, (0, 0, 0.5f), (0.5f, 0, 0));
+            // vp.AddBody(0.0001f, (0, 1, 0), (1, 0, 0));
+            // vp.AddBody(0.0005f, (0, -1, 0), (0.5f, 0, 0));
+            // vp.AddBody(0.0005f, (0, -0.8f, 0), (-0.5f, 0, 0));
+            // vp.AddBody(0.0005f, (0, -0.8f, 0.5f), (-0.5f, 0.5f, 0));
         };
         vp.AddToWindow(window);
         window.RenderFrame += args =>

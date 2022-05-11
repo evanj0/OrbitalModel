@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "OrbitalModel": {
+      "commandName": "Project",
+      "commandLineArgs": "./systems/input.json"
+    }
+  }
+}
