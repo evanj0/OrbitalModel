@@ -1,14 +1,19 @@
 {
-    "bodies": [
-        {
-            "mass": 1.0,
-            "position": { "x": 0, "y": 0, "z": 0 },
-            "velocity": { "x": 0, "y": 0, "z": 0 }
-        },
-        {
-            "mass": 0.001,
-            "position": { "x": 1, "y": 0, "z": 0 },
-            "velocity": { "x": 0, "y": 1, "z": 0 }
-        }
-    ]
+  "scale": 3.0,
+  "bodies": [
+    {
+      "name": "Sagittarius A*",
+      "mass": 8.26e+36,
+      "position": [ 0, 0, 0 ],
+      "velocity": [ 0, 0, 0 ],
+      "color": "orange"
+    },
+    {
+      "name": "S2",
+      "mass": 0.001,
+      "position": [ 1, 0, 0 ],
+      "velocity": [ 0, 1, 0 ],
+      "color": "yellow"
+    }
+  ]
 }

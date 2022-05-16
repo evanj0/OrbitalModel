@@ -11,9 +11,9 @@ namespace OrbitalModel;
 
 public static class Model
 {
-    public static Vector3 Acceleration(float g, Vector3 p, IEnumerable<Body> bodies)
+    public static Vector Acceleration(float g, Vector p, IEnumerable<Body> bodies)
     {
-        var sum = Vector3.Zero;
+        var sum = Vector.Zero;
         foreach (var body in bodies)
         {
             var x = body.Position - p;
@@ -25,7 +25,7 @@ public static class Model
         return sum;
     }
 
-    public static Vector3 Acceleration(this IEnumerable<Body> bodies, float g, Vector3 p)
+    public static Vector Acceleration(this IEnumerable<Body> bodies, float g, Vector p)
     {
         return Acceleration(g, p, bodies);
     }
@@ -48,12 +48,12 @@ public static class Model
         vectorField.UpdateVectors((pos, vec) => bodies.Acceleration(g, pos));
     }
 
-    public static Vector3 CenterOfMass(this IEnumerable<Body> bodies)
+    public static Vector CenterOfMass(this IEnumerable<Body> bodies)
     {
-        var mx = 0f;
-        var my = 0f;
-        var mz = 0f;
-        var mass = 0f;
+        var mx = 0.0;
+        var my = 0.0;
+        var mz = 0.0;
+        var mass = 0.0;
         foreach (var body in bodies)
         {
             mx += body.Mass * body.Position.X;
@@ -61,7 +61,7 @@ public static class Model
             mz += body.Mass * body.Position.Z;
             mass += body.Mass;
         }
-        var com = new Vector3(mx, my, mz) / mass;
+        var com = new Vector(mx, my, mz) / mass;
         return com;
     }
 }
@@ -83,9 +83,9 @@ public struct Vector
 
     public double Dot(Vector v) => X * v.X + Y * v.Y + Z * v.Z;
 
-    public double Mag => Math.Sqrt(X * X + Y * Y + Z * Z);
+    public double Length => Math.Sqrt(X * X + Y * Y + Z * Z);
 
-    public Vector Norm => this / Mag;
+    public Vector Normalized() => this / Length;
 
     public static Vector operator +(Vector a, Vector b) => new Vector(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
 
@@ -98,6 +98,10 @@ public struct Vector
     public static Vector operator /(Vector v, double s) => new Vector(v.X / s, v.Y / s, v.Z / s);
 
     public static implicit operator Vector((double, double, double) x) => new Vector(x.Item1, x.Item2, x.Item3);
+
+    public static implicit operator Vector3(Vector v) => new Vector3((float)v.X, (float)v.Y, (float)v.Z);
+
+    public static implicit operator Vector(Vector3 v) => new Vector(v.X, v.Y, v.Z);
 
     public override string ToString() => $"〈{X}, {Y}, {Z}〉";
 }

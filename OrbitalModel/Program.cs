@@ -78,16 +78,11 @@ public class Program
             GL.Disable(EnableCap.CullFace);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             vp.Init();
+            vp.ScaleFactor = (float)initialStateData.Scale;
             foreach (var bodyData in initialStateData.Bodies)
             {
-                vp.AddBody(bodyData.Mass, bodyData.Position.ToVector3(), bodyData.Velocity.ToVector3());
+                vp.AddBody(bodyData.Mass, bodyData.Position_Vector, bodyData.Velocity_Vector, bodyData.Color_Color4);
             }
-            // vp.AddBody(1, (0, 0, -0.5f), (-0.5f, 0, 0));
-            // vp.AddBody(1, (0, 0, 0.5f), (0.5f, 0, 0));
-            // vp.AddBody(0.0001f, (0, 1, 0), (1, 0, 0));
-            // vp.AddBody(0.0005f, (0, -1, 0), (0.5f, 0, 0));
-            // vp.AddBody(0.0005f, (0, -0.8f, 0), (-0.5f, 0, 0));
-            // vp.AddBody(0.0005f, (0, -0.8f, 0.5f), (-0.5f, 0.5f, 0));
         };
         vp.AddToWindow(window);
         window.RenderFrame += args =>
@@ -158,7 +153,7 @@ public class Program
                 ImGui.LabelText("simulation framerate", $"{vp.SimulationFrequency} fps");
                 ImGui.LabelText("time scale", $"{vp.TimeScaleDisplay} s (sim) = 1 s (real)");
                 // Implement this!
-                ImGui.SliderInt("physical scale order", ref vp.PhysicalScaleOrder, 0, 30);
+                ImGui.DragFloat("rendering scale factor", ref vp.ScaleFactor, 0.001f);
                 // Vector field
                 ImGui.Text("vector field");
                 ImGui.Separator();
@@ -201,15 +196,17 @@ public class Program
                 ImGui.End();
             }
 
-            if (ImGui.Begin("debug"))
-            {
-                ImGui.LabelText("render framerate", $"{vp.RenderFramerateDisplay} fps");
-                ImGui.LabelText("render frame time", $"{vp.RenderFrameTimeDisplay} ms");
-                ImGui.LabelText("update framerate", $"{vp.UpdateFramerateDisplay} fps");
-                ImGui.LabelText("update frame time", $"{vp.UpdateFrameTimeDisplay} ms");
+            // if (ImGui.Begin("debug"))
+            // {
+            //     ImGui.LabelText("render framerate", $"{vp.RenderFramerateDisplay} fps");
+            //     ImGui.LabelText("render frame time", $"{vp.RenderFrameTimeDisplay} ms");
+            //     ImGui.LabelText("update framerate", $"{vp.UpdateFramerateDisplay} fps");
+            //     ImGui.LabelText("update frame time", $"{vp.UpdateFrameTimeDisplay} ms");
+            // 
+            //     ImGui.End();
+            // }
 
-                ImGui.End();
-            }
+            ImGui.ShowMetricsWindow();
 
             gui.Render();
 

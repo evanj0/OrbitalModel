@@ -53,7 +53,7 @@ public class VectorField
         }
     }
 
-    public void Render(Camera camera)
+    public void Render(Camera camera, Matrix4 transform)
     {
         foreach ((var pos, var direction) in _vectors)
         {
@@ -72,8 +72,8 @@ public class VectorField
                 (u.Z, v.Z, w.Z, 0),
                 (0,   0,   0,   1));
             coordTransform.Invert();
-            _arrow.Render(camera, scale * coordTransform * translation);
-            _cube.Render(camera, translation);
+            _arrow.Render(camera, scale * coordTransform * translation * transform);
+            _cube.Render(camera, translation * transform);
         }
     }
 }

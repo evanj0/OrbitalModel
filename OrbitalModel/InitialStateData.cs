@@ -6,46 +6,66 @@ using System.Text;
 using System.Threading.Tasks;
 
 using System.Text.Json.Serialization;
+using System.Reflection;
 
 namespace OrbitalModel;
 
 #nullable disable
 
-[JsonSerializable(typeof(InitialStateData))]
 public class InitialStateData
 {
     [JsonPropertyName("scale")]
-    public float Scale
+    public double Scale { get; set; }
 
     [JsonPropertyName("bodies")]
     public List<BodyData> Bodies { get; set; }
-
 }
 
-[JsonSerializable(typeof(BodyData))]
 public class BodyData
 {
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+
     [JsonPropertyName("mass")]
-    public float Mass { get; set; }
+    public double Mass { get; set; }
 
     [JsonPropertyName("position")]
-    public VectorData Position { get; set; }
+    public double[] Position { get; set; }
 
     [JsonPropertyName("velocity")]
-    public VectorData Velocity { get; set; }
-}
+    public double[] Velocity { get; set; }
 
-[JsonSerializable(typeof(VectorData))]
-public class VectorData
-{
-    [JsonPropertyName("x")]
-    public float X { get; set; }
+    [JsonPropertyName("color")]
+    public string Color { get; set; } = string.Empty;
 
-    [JsonPropertyName("y")]
-    public float Y { get; set; }
+    [JsonIgnore]
+    public double Position_X => Position[0];
+    [JsonIgnore]
+    public double Position_Y => Position[1];
+    [JsonIgnore]
+    public double Position_Z => Position[2];
+    [JsonIgnore]
+    public Vector Position_Vector => new Vector(Position_X, Position_Y, Position_Z);
 
-    [JsonPropertyName("z")]
-    public float Z { get; set; }
+    [JsonIgnore]
+    public double Velocity_X => Velocity[0];
+    [JsonIgnore]
+    public double Velocity_Y => Velocity[1];
+    [JsonIgnore]
+    public double Velocity_Z => Velocity[2];
+    [JsonIgnore]
+    public Vector Velocity_Vector => new Vector(Velocity_X, Velocity_Y, Velocity_Z);
 
-    public Vector3 ToVector3() => new Vector3(X, Y, Z);
+    [JsonIgnore]
+    public Color4 Color_Color4 => 
+        Colors
+        .Where(x => Color.ToLower().Replace(" ", "") == x.Key.ToLower())
+        .Select(x => x.Color)
+        .FirstOrDefault(Color4.HotPink);
+
+    public static readonly List<(string Key, Color4 Color)> Colors = 
+        typeof(Color4)
+        .GetProperties(BindingFlags.Public | BindingFlags.Static)
+        .Select(x => (x.Name, (Color4)x.GetValue(null)))
+        .ToList();
 }

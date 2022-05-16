@@ -12,7 +12,6 @@ public static class Meshes
 {
     public static MeshBuilder CreateOrigin()
     {
-        var black = Color4.Black;
         var red = Color4.DarkRed;
         var green = Color4.ForestGreen;
         var blue = Color4.DeepSkyBlue;
@@ -40,16 +39,9 @@ public static class Meshes
             .JoinWith(new MeshBuilder().SetVertexColor(blue).CreateCube().Scale(0.05f, 0.05f, 2));
     }
 
-    public static MeshBuilder CreateBodyMarker()
+    public static MeshBuilder CreateBodyMarker(this MeshBuilder meshBuilder)
     {
-        var bytes = new byte[] { 0, 0, 0, };
-        new Random().NextBytes(bytes);
-        var colorR = bytes[0] / 255.0f;
-        var colorG = bytes[1] / 255.0f;
-        var colorB = bytes[2] / 255.0f;
-
-        return new MeshBuilder()
-            .SetVertexColor(new Color4(colorR, colorG, colorB, 1))
+        return meshBuilder
             .AddVertex(0, 0, 0, "o")
             .AddVertex(1, 0, 1, "x")
             .AddVertex(-1, 0, 1, "-x")
