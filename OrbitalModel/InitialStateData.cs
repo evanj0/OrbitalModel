@@ -17,14 +17,26 @@ public class InitialStateData
     [JsonPropertyName("scale")]
     public double Scale { get; set; }
 
+    [JsonPropertyName("initialTime")]
+    public double InitialTime { get; set; }
+
+    [JsonPropertyName("timeStep")]
+    public double TimeStep { get; set; }
+
     [JsonPropertyName("bodies")]
     public List<BodyData> Bodies { get; set; }
+
+    [JsonPropertyName("orbitalBodies")]
+    public List<OrbitalBodyData> OrbitalBodies { get; set; }
 }
 
 public class BodyData
 {
     [JsonPropertyName("name")]
     public string Name { get; set; }
+
+    [JsonPropertyName("color")]
+    public string Color { get; set; } = string.Empty;
 
     [JsonPropertyName("mass")]
     public double Mass { get; set; }
@@ -34,9 +46,6 @@ public class BodyData
 
     [JsonPropertyName("velocity")]
     public double[] Velocity { get; set; }
-
-    [JsonPropertyName("color")]
-    public string Color { get; set; } = string.Empty;
 
     [JsonIgnore]
     public double Position_X => Position[0];
@@ -68,4 +77,44 @@ public class BodyData
         .GetProperties(BindingFlags.Public | BindingFlags.Static)
         .Select(x => (x.Name, (Color4)x.GetValue(null)))
         .ToList();
+}
+
+public class OrbitalBodyData
+{
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+
+    [JsonPropertyName("color")]
+    public string Color { get; set; }
+
+    [JsonPropertyName("mass")]
+    public double Mass { get; set; }
+
+    [JsonPropertyName("e")]
+    public double E { get; set; }
+
+    [JsonPropertyName("a")]
+    public double A { get; set; }
+
+    [JsonPropertyName("i")]
+    public double I { get; set; }
+
+    [JsonPropertyName("Ω")]
+    public double O { get; set; }
+
+    [JsonPropertyName("ω")]
+    public double W { get; set; }
+
+    [JsonPropertyName("Tp")]
+    public double Tp { get; set; }
+
+    [JsonPropertyName("T")]
+    public double T { get; set; }
+
+    [JsonIgnore]
+    public Color4 Color_Color4 =>
+        BodyData.Colors
+        .Where(x => Color.ToLower().Replace(" ", "") == x.Key.ToLower())
+        .Select(x => x.Color)
+        .FirstOrDefault(Color4.HotPink);
 }

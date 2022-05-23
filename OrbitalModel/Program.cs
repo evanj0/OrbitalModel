@@ -28,7 +28,7 @@ public class Program
             .WithParsed(options =>
             {
                 var inputFile = File.ReadAllText(options.InputFilePath);
-                var initialStateData = JsonSerializer.Deserialize<InitialStateData>(inputFile);
+                var initialStateData = JsonSerializer.Deserialize<InitialStateData>(inputFile, new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip });
                 if (initialStateData is null) throw new Exception("Json object is null.");
                 Run(initialStateData);
             })
@@ -78,10 +78,23 @@ public class Program
             GL.Disable(EnableCap.CullFace);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             vp.Init();
-            vp.ScaleFactor = (float)initialStateData.Scale;
+            vp.Scale = (float)initialStateData.Scale;
             foreach (var bodyData in initialStateData.Bodies)
             {
-                vp.AddBody(bodyData.Mass, bodyData.Position_Vector, bodyData.Velocity_Vector, bodyData.Color_Color4);
+                vp.AddBody(bodyData.Mass, bodyData.Position_Vector, bodyData.Velocity_Vector, bodyData.Color_Color4, bodyData.Name);
+            }
+            foreach (var orbitalBodyData in initialStateData.OrbitalBodies)
+            {
+                var orbitalBody = new OrbitalBody(
+                    eccentricity: orbitalBodyData.E,
+                    semimajorAxis: orbitalBodyData.A,
+                    inclination: orbitalBodyData.I,
+                    longitudeOfAscendingNode: orbitalBodyData.O,
+                    argumentOfPeriapsis: orbitalBodyData.W,
+                    pericenterEpoch: orbitalBodyData.Tp,
+                    period: orbitalBodyData.T);
+                (var position, var velocity) = orbitalBody.InitialConditions(initialStateData.InitialTime);
+                vp.AddBody(orbitalBodyData.Mass, position, velocity, orbitalBodyData.Color_Color4, orbitalBodyData.Name);
             }
         };
         vp.AddToWindow(window);
@@ -153,7 +166,7 @@ public class Program
                 ImGui.LabelText("simulation framerate", $"{vp.SimulationFrequency} fps");
                 ImGui.LabelText("time scale", $"{vp.TimeScaleDisplay} s (sim) = 1 s (real)");
                 // Implement this!
-                ImGui.DragFloat("rendering scale factor", ref vp.ScaleFactor, 0.001f);
+                ImGui.DragFloat("rendering scale factor", ref vp.Scale, 0.001f);
                 // Vector field
                 ImGui.Text("vector field");
                 ImGui.Separator();
@@ -194,6 +207,18 @@ public class Program
                 ImGui.Checkbox("show center of mass", ref vp.ShowCenterOfMass);
 
                 ImGui.End();
+            }
+
+            if (ImGui.Begin("bodies"))
+            {
+                foreach (var body in vp.Bodies)
+                {
+                    ImGui.ColorButton($"{body.Name}", new System.Numerics.Vector4(body.Color.R, body.Color.G, body.Color.B, 1));
+                    ImGui.LabelText("x", $"{body.Position.X}");
+                    ImGui.LabelText("y", $"{body.Position.Y}");
+                    ImGui.LabelText("z", $"{body.Position.Z}");
+                    ImGui.Checkbox($"show {body.Name} velocity vector", ref body.ShowVeloctiyRef);
+                }
             }
 
             // if (ImGui.Begin("debug"))

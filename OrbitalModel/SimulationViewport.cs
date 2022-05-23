@@ -63,7 +63,7 @@ public class SimulationViewport
     public bool ShowCenterOfMass = false;
     private Mesh _centerOfMass;
     private Matrix4 _centerOfMassTransform = Matrix4.Identity;
-    public float ScaleFactor = 1.0f;
+    public float Scale = 1.0f;
 
     public bool Paused = false;
 
@@ -140,11 +140,11 @@ public class SimulationViewport
 
     public void Render()
     {
-        var scale = Matrix4.CreateScale(ScaleFactor);
+        var scale = Matrix4.CreateScale(1.0f / Scale);
         _origin.Render(_camera, Matrix4.Identity);
         foreach (var body in Bodies)
         {
-            body.Render(_camera, scale);
+            body.Render(_camera, scale, Scale);
         }
         if (ShowAccelerationField)
         {
@@ -156,9 +156,9 @@ public class SimulationViewport
         }
     }
 
-    public void AddBody(double mass, Vector3 position, Vector3 acceleration, Color4 color)
+    public void AddBody(double mass, Vector3 position, Vector3 acceleration, Color4 color, string name)
     {
-        Bodies.Add(new Body(mass, position, acceleration, new MeshBuilder().SetVertexColor(color).CreateBodyMarker().CreateMesh(_shader)));
+        Bodies.Add(new Body(mass, position, acceleration, new MeshBuilder().SetVertexColor(color).CreateBodyMarker().CreateMesh(_shader), name, color));
     }
 
     public void ResetCamera()

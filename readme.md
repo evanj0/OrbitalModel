@@ -1,4 +1,13 @@
+# System description file
+
+For bodies input as orbital elements, i, Ω, ω are in degrees. a is in meters. Tp, T are in seconds. 
+
+## Useful formulas
+
+`e = (a - p) / (a + p)` where `a` is apoapsis, `p` is periapsis.
+
 ## Available colors
+
 Colors can optionally be written in lowercase and with spaces.
 
 ```
