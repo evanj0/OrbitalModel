@@ -66,7 +66,7 @@ public class Program
             Width = width,
             Height = height,
             SimulationFrequency = updateFrequency,
-            G = 1,
+            G = 6.6743e-11f,
         };
 
         window.Load += () =>
@@ -88,9 +88,9 @@ public class Program
                 var orbitalBody = new OrbitalBody(
                     eccentricity: orbitalBodyData.E,
                     semimajorAxis: orbitalBodyData.A,
-                    inclination: orbitalBodyData.I,
-                    longitudeOfAscendingNode: orbitalBodyData.O,
-                    argumentOfPeriapsis: orbitalBodyData.W,
+                    inclination: orbitalBodyData.I * 0.0174533,
+                    longitudeOfAscendingNode: orbitalBodyData.O * 0.0174533,
+                    argumentOfPeriapsis: orbitalBodyData.W * 0.0174533,
                     pericenterEpoch: orbitalBodyData.Tp,
                     period: orbitalBodyData.T);
                 (var position, var velocity) = orbitalBody.InitialConditions(initialStateData.InitialTime);
@@ -103,6 +103,7 @@ public class Program
             GL.Enable(EnableCap.DepthTest);
 
             GL.ClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+            GL.ClearColor(0, 0, 0, 0);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
             // Render viewport
@@ -218,6 +219,7 @@ public class Program
                     ImGui.LabelText("y", $"{body.Position.Y}");
                     ImGui.LabelText("z", $"{body.Position.Z}");
                     ImGui.Checkbox($"show {body.Name} velocity vector", ref body.ShowVeloctiyRef);
+                    ImGui.Checkbox($"show {body.Name} trail", ref body.ShowTrailRef);
                 }
             }
 

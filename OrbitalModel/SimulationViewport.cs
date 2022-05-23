@@ -156,9 +156,9 @@ public class SimulationViewport
         }
     }
 
-    public void AddBody(double mass, Vector3 position, Vector3 acceleration, Color4 color, string name)
+    public void AddBody(double mass, Vector3 position, Vector3 velocity, Color4 color, string name)
     {
-        Bodies.Add(new Body(mass, position, acceleration, new MeshBuilder().SetVertexColor(color).CreateBodyMarker().CreateMesh(_shader), name, color));
+        Bodies.Add(new Body(mass, position, velocity, new MeshBuilder().SetVertexColor(color).CreateBodyMarker().CreateMesh(_shader), name, color));
     }
 
     public void ResetCamera()

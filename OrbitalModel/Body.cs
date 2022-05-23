@@ -15,20 +15,29 @@ public class Body
     public bool ShowVeloctiy { set => _showVelocity = value; }
     private Mesh _mesh;
     private Mesh _arrowMesh;
+    private bool _showTrail;
+    private List<Vector> _positions;
+    public ref bool ShowTrailRef => ref _showTrail;
 
     public Body(double mass, Vector position, Vector velocity, Mesh mesh, string name, Color4 color)
     {
         Mass = mass;
         Velocity = velocity;
         Position = position;
-        _mesh = mesh;
+        _mesh = new MeshBuilder()
+            .SetVertexColor(color)
+            .CreateCenteredCube()
+            .Scale(0.2f)
+            .CreateMesh(mesh.Shader);
         Name = name;
         Color = color;
         _arrowMesh = new MeshBuilder()
             .SetVertexColor(Color4.Yellow)
             .CreateArrow()
             .Scale(0.1f, 0.1f, 1)
+            .Translate(0, 0, 1)
             .CreateMesh(mesh.Shader);
+        _positions = new List<Vector>();
     }
 
     public void Render(Camera camera, Matrix4 transform, float size)
@@ -38,9 +47,9 @@ public class Body
         _mesh.Render(camera, matrix);
         if (_showVelocity)
         {
-            var u = Velocity.Normalized();
-            var v = Vector.Cross(u, Position).Normalized();
-            var w = Vector.Cross(v, u).Normalized();
+            var w = Velocity.Normalized();
+            var v = Vector.Cross(w, Position).Normalized();
+            var u = Vector.Cross(w, v).Normalized();
             var coordTransform = new Matrix4(
                 ((float)u.X, (float)v.X, (float)w.X, 0),
                 ((float)u.Y, (float)v.Y, (float)w.Y, 0),
@@ -48,6 +57,18 @@ public class Body
                 (0, 0, 0, 1));
             coordTransform.Invert();
             _arrowMesh.Render(camera, coordTransform * Matrix4.CreateTranslation(Position * (1 / size)));
+        }
+        if (_showTrail)
+        {
+            _positions.Add(Position);
+            foreach (var position in _positions)
+            {
+                _mesh.Render(camera, Matrix4.CreateScale(0.2f) * Matrix4.CreateScale(size) * Matrix4.CreateTranslation(position) * transform);
+            }
+            if (_positions.Count > 10000)
+            {
+                _positions.RemoveAt(0);
+            }
         }
     }
 }

@@ -79,7 +79,7 @@ public class OrbitalBody
 
     public static double InstantaneousSpeed(double u, double r, double a)
     {
-        return Math.Sqrt(u * (2.0 / r - 1.0 / a));
+        return Math.Sqrt(u * ((2.0 / r) - (1.0 / a)));
     }
 
     public double GravitationalParameter => 4 * Math.PI * Math.PI * SemimajorAxis * SemimajorAxis * SemimajorAxis / (Period * Period);
