@@ -26,16 +26,16 @@ public class VectorField
         }
 
         _arrow = new MeshBuilder()
-            .SetVertexColor(Color4.DarkOrange)
+            .SetVertexColor(Color4.Gray)
             .CreateArrow()
-            .ScaleXY(0.01f)
+            .ScaleXY(0.02f)
             .CreateMesh(shader);
 
         _cube = new MeshBuilder()
-            .SetVertexColor(Color4.Teal)
+            .SetVertexColor(Color4.DarkGray)
             .CreateCube()
             .Translate(-0.5f, -0.5f, -0.5f)
-            .Scale(0.015f)
+            .Scale(0.02f)
             .CreateMesh(shader);
     }
 
@@ -45,6 +45,8 @@ public class VectorField
 
     private Mesh _cube;
 
+    public float MaxValue { get; set; } = 1;
+
     public void UpdateVectors(Func<Vector3, Vector3, Vector3> mapping)
     {
         for (var i = 0; i < _vectors.Count; i++)
@@ -53,7 +55,7 @@ public class VectorField
         }
     }
 
-    public void Render(Camera camera, Matrix4 transform)
+    public void Render(Camera camera, Matrix4 transform, float scale)
     {
         foreach ((var pos, var direction) in _vectors)
         {
@@ -65,15 +67,16 @@ public class VectorField
             w.NormalizeFast();
             var translation = Matrix4.CreateTranslation(pos);
             var length = 1f - (1f / (0.1f * direction.LengthFast + 1));
-            var scale = Matrix4.CreateScale((1, 1, length * 0.5f));
+            var lengthTransform = Matrix4.CreateScale((1, 1, 0.2f));
+            var renderingScaleTransform = Matrix4.CreateScale(scale);
             var coordTransform = new Matrix4(
                 (u.X, v.X, w.X, 0),
                 (u.Y, v.Y, w.Y, 0),
                 (u.Z, v.Z, w.Z, 0),
                 (0,   0,   0,   1));
             coordTransform.Invert();
-            _arrow.Render(camera, scale * coordTransform * translation * transform);
-            _cube.Render(camera, translation * transform);
+            _arrow.Render(camera, lengthTransform * renderingScaleTransform * coordTransform * translation * transform);
+            // _cube.Render(camera, renderingScaleTransform * translation * transform);
         }
     }
 }

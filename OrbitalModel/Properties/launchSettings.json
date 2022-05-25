@@ -2,7 +2,7 @@
   "profiles": {
     "OrbitalModel": {
       "commandName": "Project",
-      "commandLineArgs": "./systems/input.json"
+      "commandLineArgs": "./systems/sgr_a.json"
     }
   }
 }

@@ -23,6 +23,9 @@ public class InitialStateData
     [JsonPropertyName("timeStep")]
     public double TimeStep { get; set; }
 
+    [JsonPropertyName("vectorFieldSize")]
+    public double VectorFieldSize { get; set; }
+
     [JsonPropertyName("bodies")]
     public List<BodyData> Bodies { get; set; }
 
@@ -37,6 +40,9 @@ public class BodyData
 
     [JsonPropertyName("color")]
     public string Color { get; set; } = string.Empty;
+
+    [JsonPropertyName("showTrail")]
+    public bool ShowTrail { get; set; }
 
     [JsonPropertyName("mass")]
     public double Mass { get; set; }
@@ -86,6 +92,12 @@ public class OrbitalBodyData
 
     [JsonPropertyName("color")]
     public string Color { get; set; }
+
+    [JsonPropertyName("showTrail")]
+    public bool ShowTrail { get; set; }
+
+    [JsonPropertyName("reference")]
+    public string Reference { get; set; }
 
     [JsonPropertyName("mass")]
     public double Mass { get; set; }

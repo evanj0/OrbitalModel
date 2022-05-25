@@ -1,0 +1,76 @@
+﻿{
+  "scale": 2e+10,
+  "vectorFieldSize": 1e+11,
+  "initialTime": 6.377e+10, // 2022 y
+  "timeStep": 10,
+  "bodies": [
+    {
+      "name": "Sun",
+      "color": "orange",
+      "showTrail": false,
+      "mass": 1.9885e+30,
+      "position": [ 0, 0, 0 ],
+      "velocity": [ 0, 0, 0 ]
+    }
+  ],
+  "orbitalBodies": [
+    {
+      "name": "Mercury",
+      "color": "red",
+      "showTrail": true,
+      "mass": 5.972e+24,
+      "reference": "Sun",
+      "e": 0.205630,
+      "a": 57909050000, // 57909050 km
+      "i": 3.38,
+      "Ω": 48.331,
+      "ω": 29.124,
+      "Tp": 63770345600, // couldnt find this on wiki
+      "T": 7.60053e+6 // 87.9691 d
+    },
+
+    {
+      "name": "Earth",
+      "color": "deep sky blue",
+      "showTrail": true,
+      "mass": 5.972e+24,
+      "reference": "Sun",
+      "e": 0.0167086,
+      "a": 149598023000, // 149598023 km
+      "i": 7.155,
+      "Ω": -11.26064,
+      "ω": 114.20783,
+      "Tp": 63770345600, // 2022 y 4 d
+      "T": 3.15581497635e+7 // 365.256363004 d
+    },
+    {
+      "name": "Earth_Moon",
+      "color": "light gray",
+      "showTrail": true,
+      "mass": 7.342e+22,
+      "reference": "Earth",
+      "e": 0.0549,
+      "a": 384399000, // 384399 km
+      "i": 5.145,
+      "Ω": 0,
+      "ω": 0,
+      "Tp": 63770345600, // 2022 y 4 d
+      "T": 2.360592e+6 // 27.321661 d
+    },
+
+    {
+      "name": "Mars",
+      "color": "dark orange",
+      "showTrail": true,
+      "mass": 6.4171e+23,
+      "reference": "Sun",
+      "e": 0.0934,
+      "a": 206650000000, // 206650000 km
+      "i": 5.65,
+      "Ω": 49.57854,
+      "ω": 286.5,
+      "Tp": 6.378e+10, // 2022 y 6 mo 21 d
+      "T": 5.93551e+7 // (sidereal) 5.93551e+7 s = 686.980 d (synodic) 6.7387e+7 s = 779.94 d
+    }
+  ]
+}

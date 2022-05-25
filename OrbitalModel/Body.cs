@@ -19,7 +19,7 @@ public class Body
     private List<Vector> _positions;
     public ref bool ShowTrailRef => ref _showTrail;
 
-    public Body(double mass, Vector position, Vector velocity, Mesh mesh, string name, Color4 color)
+    public Body(double mass, Vector position, Vector velocity, Shader shader, string name, Color4 color)
     {
         Mass = mass;
         Velocity = velocity;
@@ -27,8 +27,8 @@ public class Body
         _mesh = new MeshBuilder()
             .SetVertexColor(color)
             .CreateCenteredCube()
-            .Scale(0.2f)
-            .CreateMesh(mesh.Shader);
+            .Scale(0.1f)
+            .CreateMesh(shader);
         Name = name;
         Color = color;
         _arrowMesh = new MeshBuilder()
@@ -36,13 +36,17 @@ public class Body
             .CreateArrow()
             .Scale(0.1f, 0.1f, 1)
             .Translate(0, 0, 1)
-            .CreateMesh(mesh.Shader);
+            .CreateMesh(shader);
         _positions = new List<Vector>();
+    }
+
+    public void ClearTrail()
+    {
+        _positions.Clear();
     }
 
     public void Render(Camera camera, Matrix4 transform, float size)
     {
-        var scale = Matrix4.CreateScale(0.1f * (float)Mass + 0.075f);
         var matrix = Matrix4.CreateScale(size) * Matrix4.CreateTranslation(Position) * transform;
         _mesh.Render(camera, matrix);
         if (_showVelocity)

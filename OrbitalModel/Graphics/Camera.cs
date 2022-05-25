@@ -149,7 +149,8 @@ public static class GameWindow_Extensions
         {
             if (window.IsMouseButtonDown(MouseButton.Right) && !ImGuiNET.ImGui.GetIO().WantCaptureMouse)
             {
-                camera.TranslateLocal(-1f * args.DeltaX * sensitivity, args.DeltaY * sensitivity, 0, true);
+                var distanceFac = (camera.Position - camera.Target).LengthFast * 0.5f;
+                camera.TranslateLocal(-1f * args.DeltaX * sensitivity * distanceFac, args.DeltaY * sensitivity * distanceFac, 0, true);
             }
         };
     }

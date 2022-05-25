@@ -24,7 +24,7 @@ public class SimulationViewport
             FarClip = DefaultCameraFarClip,
         };
 
-        _shader = null!;
+        Shader = null!;
         _accelerationField = null!;
         _origin = null!;
         _centerOfMass = null!;
@@ -33,13 +33,13 @@ public class SimulationViewport
     public int Width = 1400;
     public int Height = 900;
     public float SimulationFrequency = 60.0f;
-    public float FovDegrees = 90.0f;
-    public Vector3 DefaultCameraPosition = (1.5f, 1.5f, 1);
+    public float FovDegrees = 40.0f;
+    public Vector3 DefaultCameraPosition = (0, -5, 30);
     public Vector3 DefaultCameraTarget = (0, 0, 0);
     public float DefaultCameraNearClip = 0.1f;
-    public float DefaultCameraFarClip = 100.0f;
+    public float DefaultCameraFarClip = 1000.0f;
     private Camera _camera;
-    private Shader _shader;
+    public Shader Shader { get; set; }
     public List<Body> Bodies { get; set; } = new List<Body>();
     public float G = 1.0f;
     public float DtSignificand = 1.0f;
@@ -65,25 +65,25 @@ public class SimulationViewport
     private Matrix4 _centerOfMassTransform = Matrix4.Identity;
     public float Scale = 1.0f;
 
-    public bool Paused = false;
+    public bool Paused = true;
 
     /// <summary>
     /// Must be called before using.
     /// </summary>
     public void Init()
     {
-        _shader = new ShaderBuilder()
+        Shader = new ShaderBuilder()
             .AddVertexFromFile("../../../assets/vertex.glsl")
             .AddFragmentFromFile("../../../assets/fragment_color.glsl")
             .Compile();
         _accelerationField = new VectorField(
             VectorFieldXMin, VectorFieldXMax, 
             VectorFieldYMin, VectorFieldYMax, 
-            VectorFieldZMin, VectorFieldZMax, VectorFieldSpacing, _shader);
+            VectorFieldZMin, VectorFieldZMax, VectorFieldSpacing, Shader);
         _origin = Meshes.CreateOrigin()
-            .Scale(0.25f)
-            .CreateMesh(_shader);
-        _centerOfMass = new MeshBuilder().CreateCom().CreateMesh(_shader);
+            .Scale(0.4f)
+            .CreateMesh(Shader);
+        _centerOfMass = new MeshBuilder().CreateCom().CreateMesh(Shader);
     }
 
     public void OnUpdate(FrameEventArgs args)
@@ -140,25 +140,30 @@ public class SimulationViewport
 
     public void Render()
     {
-        var scale = Matrix4.CreateScale(1.0f / Scale);
+        var scaleTransform = Matrix4.CreateScale(1.0f / Scale);
         _origin.Render(_camera, Matrix4.Identity);
         foreach (var body in Bodies)
         {
-            body.Render(_camera, scale, Scale);
+            body.Render(_camera, scaleTransform, Scale);
         }
         if (ShowAccelerationField)
         {
-            _accelerationField.Render(_camera, scale);
+            _accelerationField.Render(_camera, scaleTransform, Scale);
         }
         if (ShowCenterOfMass)
         {
-            _centerOfMass.Render(_camera, _centerOfMassTransform * scale);
+            _centerOfMass.Render(_camera, Matrix4.CreateScale(Scale) * _centerOfMassTransform * scaleTransform);
         }
     }
 
     public void AddBody(double mass, Vector3 position, Vector3 velocity, Color4 color, string name)
     {
-        Bodies.Add(new Body(mass, position, velocity, new MeshBuilder().SetVertexColor(color).CreateBodyMarker().CreateMesh(_shader), name, color));
+        Bodies.Add(new Body(mass, position, velocity, Shader, name, color));
+    }
+
+    public void AddBody(Body body)
+    {
+        Bodies.Add(body);
     }
 
     public void ResetCamera()
@@ -187,7 +192,7 @@ public class SimulationViewport
         _accelerationField = new VectorField(
             VectorFieldXMin, VectorFieldXMax, 
             VectorFieldYMin, VectorFieldYMax, 
-            VectorFieldZMin, VectorFieldZMax, VectorFieldSpacing, _shader);
+            VectorFieldZMin, VectorFieldZMax, VectorFieldSpacing, Shader);
     }
 
     private static float Round(float value) => (float)Math.Round(value, 3);

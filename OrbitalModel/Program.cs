@@ -61,13 +61,26 @@ public class Program
 
         ImGuiController gui = null!;
 
+        var scale = (float)initialStateData.VectorFieldSize;
+
         var vp = new SimulationViewport()
         {
             Width = width,
             Height = height,
             SimulationFrequency = updateFrequency,
             G = 6.6743e-11f,
-        };
+            Scale = (float)initialStateData.Scale,
+            DtSignificand = (float)initialStateData.TimeStep,
+            DtExponent = 0,
+            StepsPerFrame = 100,
+            VectorFieldXMin = -scale,
+            VectorFieldXMax = scale,
+            VectorFieldYMin = -scale,
+            VectorFieldYMax = scale,
+            VectorFieldZMin = -scale,
+            VectorFieldZMax = scale,
+            VectorFieldSpacing = scale / 5,
+        };  
 
         window.Load += () =>
         {
@@ -78,10 +91,12 @@ public class Program
             GL.Disable(EnableCap.CullFace);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             vp.Init();
-            vp.Scale = (float)initialStateData.Scale;
+            var bodies = new List<Body>();
             foreach (var bodyData in initialStateData.Bodies)
             {
-                vp.AddBody(bodyData.Mass, bodyData.Position_Vector, bodyData.Velocity_Vector, bodyData.Color_Color4, bodyData.Name);
+                var body = new Body(bodyData.Mass, bodyData.Position_Vector, bodyData.Velocity_Vector, vp.Shader, bodyData.Name, bodyData.Color_Color4);
+                body.ShowTrailRef = bodyData.ShowTrail;
+                bodies.Add(body);
             }
             foreach (var orbitalBodyData in initialStateData.OrbitalBodies)
             {
@@ -93,8 +108,17 @@ public class Program
                     argumentOfPeriapsis: orbitalBodyData.W * 0.0174533,
                     pericenterEpoch: orbitalBodyData.Tp,
                     period: orbitalBodyData.T);
+                var referenceBody = bodies.Find(body => body.Name == orbitalBodyData.Reference);
+                if (referenceBody is null) throw new Exception($"Referenced body `{orbitalBodyData.Reference}` does not exist. Referenced bodies need to be defined earlier than dependents.");
                 (var position, var velocity) = orbitalBody.InitialConditions(initialStateData.InitialTime);
-                vp.AddBody(orbitalBodyData.Mass, position, velocity, orbitalBodyData.Color_Color4, orbitalBodyData.Name);
+
+                var body = new Body(orbitalBodyData.Mass, position + referenceBody.Position, velocity + referenceBody.Velocity, vp.Shader, orbitalBodyData.Name, orbitalBodyData.Color_Color4);
+                body.ShowTrailRef = orbitalBodyData.ShowTrail;
+                bodies.Add(body);
+            }
+            foreach (var body in bodies)
+            {
+                vp.AddBody(body);
             }
         };
         vp.AddToWindow(window);
@@ -160,8 +184,9 @@ public class Program
                 ImGui.SameLine();
                 ImGui.Text(vp.Paused ? "Paused" : "Running");
 
-                ImGui.SliderFloat("time step significand", ref vp.DtSignificand, 1f, 10f);
-                ImGui.SliderInt("time step exponent", ref vp.DtExponent, -6, 6);
+                // ImGui.SliderFloat("time step significand", ref vp.DtSignificand, 1f, 10f);
+                // ImGui.SliderInt("time step exponent", ref vp.DtExponent, -6, 6);
+                ImGui.DragFloat("time step", ref vp.DtSignificand, 0.5f);
                 ImGui.SliderInt("steps per frame", ref vp.StepsPerFrame, 1, 10000);
                 ImGui.LabelText("time step", $"{vp.RealDtDisplay} s");
                 ImGui.LabelText("simulation framerate", $"{vp.SimulationFrequency} fps");
@@ -214,12 +239,19 @@ public class Program
             {
                 foreach (var body in vp.Bodies)
                 {
-                    ImGui.ColorButton($"{body.Name}", new System.Numerics.Vector4(body.Color.R, body.Color.G, body.Color.B, 1));
-                    ImGui.LabelText("x", $"{body.Position.X}");
-                    ImGui.LabelText("y", $"{body.Position.Y}");
-                    ImGui.LabelText("z", $"{body.Position.Z}");
-                    ImGui.Checkbox($"show {body.Name} velocity vector", ref body.ShowVeloctiyRef);
-                    ImGui.Checkbox($"show {body.Name} trail", ref body.ShowTrailRef);
+                    ImGui.PushID(body.Name);
+                    if (ImGui.CollapsingHeader($"{body.Name}"))
+                    {
+                        ImGui.ColorButton($"{body.Name}", new System.Numerics.Vector4(body.Color.R, body.Color.G, body.Color.B, 1));
+                        ImGui.LabelText("position", $"({body.Position.X:0.000e0}, {body.Position.Y:0.000e0}, {body.Position.Z:0.000e0})");
+                        ImGui.Checkbox($"show velocity vector", ref body.ShowVeloctiyRef);
+                        ImGui.Checkbox($"show trail", ref body.ShowTrailRef);
+                        if (ImGui.Button("clear trail"))
+                        {
+                            body.ClearTrail();
+                        }
+                    }
+                    ImGui.PopID();
                 }
             }
 

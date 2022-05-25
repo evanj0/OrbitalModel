@@ -74,7 +74,65 @@ public class OrbitalBody
             .Normalized();
         var radius = Radius(v, SemimajorAxis, Eccentricity);
         var speed = InstantaneousSpeed(GravitationalParameter, radius, SemimajorAxis);
-        return (posUnit * radius, velUnit * speed);
+        return (R_Pos(t), R_Vel(t));
+    }
+
+    public Vector R_Vel(double t)
+    {
+        var o = O_Vel(t);
+        var ox = o.X;
+        var oy = o.Y;
+
+        var rx = (ox * ((Math.Cos(W) * Math.Cos(O)) - (Math.Sin(W) * Math.Cos(I) * Math.Sin(O)))) - (oy * ((Math.Sin(W) * Math.Cos(O)) + (Math.Cos(W) * Math.Cos(I) * Math.Sin(O))));
+        var ry = (ox * ((Math.Cos(W) * Math.Sin(O)) + (Math.Sin(W) * Math.Cos(I) * Math.Cos(O)))) + (oy * ((Math.Cos(W) * Math.Cos(I) * Math.Cos(O)) - (Math.Sin(W) * Math.Sin(O))));
+        var rz = (ox * Math.Sin(W) * Math.Sin(I)) + (oy * Math.Cos(W) * Math.Sin(I));
+        return new Vector(rx, ry, rz);
+    }
+
+    public Vector R_Pos(double t)
+    {
+        var o = O_Pos(t);
+        var ox = o.X;
+        var oy = o.Y;
+
+        var rx = (ox * ((Math.Cos(W) * Math.Cos(O)) - (Math.Sin(W) * Math.Cos(I) * Math.Sin(O)))) - (oy * ((Math.Sin(W) * Math.Cos(O)) + (Math.Cos(W) * Math.Cos(I) * Math.Sin(O))));
+        var ry = (ox * ((Math.Cos(W) * Math.Sin(O)) + (Math.Sin(W) * Math.Cos(I) * Math.Cos(O)))) + (oy * ((Math.Cos(W) * Math.Cos(I) * Math.Cos(O)) - (Math.Sin(W) * Math.Sin(O))));
+        var rz = (ox * Math.Sin(W) * Math.Sin(I)) + (oy * Math.Cos(W) * Math.Sin(I));
+        return new Vector(rx, ry, rz);
+    }
+
+    public Vector O_Pos(double t)
+    {
+        var v = TrueAnomaly(t);
+        return Radius(t) * new Vector(Math.Cos(v), Math.Sin(v), 0);
+    }
+
+    public Vector O_Vel(double t)
+    {
+        var E = EccentricAnomaly(t);
+        return Math.Sqrt(GravitationalParameter * SemimajorAxis) / Radius(t) * new Vector(-Math.Sin(E), Math.Sqrt(1 - (Eccentricity * Eccentricity)) * Math.Cos(E), 0);
+    }
+
+    public double Radius(double t)
+    {
+        return Radius(TrueAnomaly(t), SemimajorAxis, Eccentricity);
+    }
+
+    public double TrueAnomaly(double t)
+    {
+        var E = EccentricAnomaly(t);
+        return TrueAnomaly(E, Eccentricity);
+    }
+
+    public double EccentricAnomaly(double t)
+    {
+        var M = MeanAnomaly(t);
+        return EccentricAnomaly(M, Eccentricity);
+    }
+
+    public double MeanAnomaly(double t)
+    {
+        return MeanAnomaly(t, Period, PericenterEpoch);
     }
 
     public static double InstantaneousSpeed(double u, double r, double a)

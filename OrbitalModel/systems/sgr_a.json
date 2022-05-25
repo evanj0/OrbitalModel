@@ -1,0 +1,60 @@
+﻿{
+  "scale": 1e+14,
+  "vectorFieldSize": 1e+15,
+  "initialTime": 6.307e+10, // 2000
+  "timeStep": 10000,
+  "bodies": [
+    {
+      "name": "Sgr A*",
+      "color": "orange",
+      "showTrail": false,
+      "mass": 8.57e+36,
+      "position": [ 0, 0, 0 ],
+      "velocity": [ 0, 0, 0 ]
+    }
+  ],
+  "orbitalBodies": [
+    {
+      "name": "S1",
+      "color": "purple",
+      "showTrail": true,
+      "mass": 1,
+      "reference": "Sgr A*",
+      "e": 0.5560,
+      "a": 7.280e+14, // per = 2160.7, ap = 7572.182, a = 4866.44
+      "i": 119.14,
+      "Ω": 342.04,
+      "ω": 122.30,
+      "Tp": 6.31288e+10, // 2001.800
+      "T": 5.235e+9 // 166.0 y
+    },
+    {
+      "name": "S2",
+      "color": "red",
+      "showTrail": true,
+      "mass": 1,
+      "reference": "Sgr A*",
+      "e": 0.8843,
+      "a": 1.530e+14, // per = 118.4, ap = 1928.272, a = 1023.34
+      "i": 133.91,
+      "Ω": 228.07,
+      "ω": 66.25,
+      "Tp": 6.36516e+10, // 2018.379
+      "T": 5.077e+8 // 16.1 y
+    },
+    {
+      "name": "S13",
+      "color": "deep sky blue",
+      "showTrail": true,
+      "mass": 1,
+      "reference": "Sgr A*",
+      "e": 0.4250,
+      "a": 3.231e+14, // per = 1242.0, ap = 3078.0, a = 2160.0
+      "i": 24.70,
+      "Ω": 74.50,
+      "ω": 245.20,
+      "Tp": 6.36516e+10, // 2004.860	
+      "T": 1.545e+9 // 49.0 y
+    }
+  ]
+}
